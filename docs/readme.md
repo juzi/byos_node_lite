@@ -2,8 +2,10 @@
 
 You can build a custom screen for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin)
 or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins.
+to display your personal info on your device.
 
-Goal of this repo: simple and easy to customize.
+As it bult on popular Javascript and Node.js platform, you can easily connect to database, do fetch requests or get data
+from any source.
 
 ## Technologies used:
 
@@ -21,12 +23,12 @@ Goal of this repo: simple and easy to customize.
 5. After changes you should deploy your version of this repo to your server
 
 ## Endpoints of server
+
 **Image** http://localhost:3000/image?secret_key=... <br>
 -- can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
 
 **API** http://localhost:3000/api?secret_key=... <br>
 -- can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
-
 
 ## JSX components
 
@@ -72,3 +74,6 @@ Fetch Screen Content as your device (Developer edition):
 ```
 curl https://usetrmnl.com/api/display --header "access-token:xxxxxx"
 ```
+
+---
+Goal of this repo: simple and easy to customize.
