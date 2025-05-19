@@ -20,6 +20,14 @@ Goal of this repo: simple and easy to customize.
 3. You can preview result locally `npm run watch`
 5. After changes you should deploy your version of this repo to your server
 
+## Endpoints of server
+**Image** http://localhost:3000/image?secret_key=... <br>
+-- can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
+
+**API** http://localhost:3000/api?secret_key=... <br>
+-- can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
+
+
 ## JSX components
 
 You can use regular JSX components (similar to React), but without hooks, as screen is rendering only once.<br>
