@@ -6,6 +6,8 @@ or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins 
 As it bult on popular Javascript and Node.js platform, you can easily connect to database, fetch requests or get data
 from any source, and design it with HTML, JSX, CSS.
 
+<img src="preview.png" alt="preview">
+
 ## Quick Start
 
 1. Press button `Use this template` on Github or clone this repository
