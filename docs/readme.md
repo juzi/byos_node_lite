@@ -41,12 +41,11 @@ change to any structure that you prefer.
 ## Layout design limitations
 - Satori supports **CSS Flexbox** layout engine only
 - [it’s not a complete CSS standards implementation](https://github.com/vercel/satori?tab=readme-ov-file#css) 
-- Each element (like <div>) with a few child nodes should have explicit "display: flex"
+- Each element (like `<div>`) with a few child nodes should have explicit "display: flex"
 
 ## Using fonts
 
-To render screen you have to [provide a font file](../src/Utils/JSXtoPNG.ts). By default is
-attached [Inter](../assets/fonts/Inter_18pt-Regular.ttf).
+To render screen you have to [provide a font file](../src/Utils/JSXtoPNG.ts). One is [attached by default](../assets/fonts/).
 
 ## Including images
 
