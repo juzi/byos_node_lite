@@ -1,18 +1,10 @@
 # Image server for TRMNL built with Node.js, JSX and CSS
 
 You can build a custom screen for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin)
-or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins.
-to display your personal info on your device.
+or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins with your data and design.
 
-As it bult on popular Javascript and Node.js platform, you can easily connect to database, do fetch requests or get data
-from any source.
-
-## Technologies used:
-
-- [Satori](https://www.npmjs.com/package/satori) for rendering JSX to SVG
-- [resvg-js](https://www.npmjs.com/package/@resvg/resvg-js) for rendering SVG to PNG
-- [Express.js](https://expressjs.com) as API server
-- [TSX](https://tsx.is) for supporting JSX/TSX files
+As it bult on popular Javascript and Node.js platform, you can easily connect to database, fetch requests or get data
+from any source, and design it with HTML, JSX, CSS.
 
 ## Quick Start
 
@@ -21,6 +13,13 @@ from any source.
 3. Create file .env.local based on .env.example
 3. You can preview result locally `npm run watch`
 5. After changes you should deploy your version of this repo to your server
+
+## Technologies used:
+
+- [Satori](https://www.npmjs.com/package/satori) for rendering JSX to SVG
+- [resvg-js](https://www.npmjs.com/package/@resvg/resvg-js) for rendering SVG to PNG
+- [Express.js](https://expressjs.com) as API server
+- [TSX](https://tsx.is) for supporting JSX/TSX files
 
 ## Endpoints of server
 
