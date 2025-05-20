@@ -37,10 +37,9 @@ It's easier to collect all variables and data [in one place](../src/Data/Prepare
 change to any structure that you prefer.
 
 ## Layout design limitations
-
-Satori uses the same **CSS Flexbox** layout engine, bus it’s not a complete CSS standards implementation.<br>
-However, it supports a subset of the spec that covers most
-common [CSS features](https://github.com/vercel/satori?tab=readme-ov-file#css)
+- Satori supports **CSS Flexbox** layout engine only
+- [it’s not a complete CSS standards implementation](https://github.com/vercel/satori?tab=readme-ov-file#css) 
+- Each element (like <div>) with a few child nodes should have explicit "display: flex"
 
 ## Using fonts
 
