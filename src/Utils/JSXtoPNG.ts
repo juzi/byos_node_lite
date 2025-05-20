@@ -13,8 +13,8 @@ export async function JSXtoPNG(Component: ReactNode) {
             height: 480,
             fonts: [
                 {
-                    name: 'Inter',
-                    data: readFileSync(ASSETS_FOLDER + '/fonts/Inter_18pt-Regular.ttf'),
+                    name: 'Default',
+                    data: readFileSync(ASSETS_FOLDER + '/fonts/DePixelKlein.ttf'),
                     weight: 400,
                     style: 'normal',
                 },
