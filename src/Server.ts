@@ -2,7 +2,7 @@ import {JSXtoPNG} from "./Utils/JSXtoPNG.js";
 import App from "./Template/App.js";
 import express from "express";
 import {prepareData} from "./Data/PrepareData.js";
-import {SECRET_KEY, SERVER_PORT, URL_ORIGIN} from "./Config.js";
+import {SECRET_KEY, SERVER_HOST, SERVER_PORT, PUBLIC_URL_ORIGIN} from "./Config.js";
 import {PNGto1BIT} from "./Utils/PNGto1BIT.js";
 import crypto from 'crypto';
 
@@ -28,7 +28,7 @@ app.get('/api', async (req, res) => {
     res.send(JSON.stringify({
         // screen wouldn't update if data is not changed
         filename: 'custom-screen-' + imageHash,
-        url: URL_ORIGIN + '/image?secret_key=' + SECRET_KEY,
+        url: PUBLIC_URL_ORIGIN + '/image?secret_key=' + SECRET_KEY,
         refresh_rate: 60, // Seconds. Can be overridden by device settings.
     }));
 });
@@ -60,11 +60,11 @@ app.use((err: Error, req, res, next) => {
     });
 });
 
-app.listen(SERVER_PORT, (error) => {
+app.listen(SERVER_PORT, SERVER_HOST, (error) => {
     if (error) {
         throw error;
     } else {
-        console.log(`App listening on ${URL_ORIGIN}/api?secret_key=INSERT_KEY_HERE`);
+        console.log(`Server started. Check it http://${SERVER_HOST}:${SERVER_PORT}/api?secret_key=... OR ${PUBLIC_URL_ORIGIN}/api?secret_key=...`);
     }
 })
 
