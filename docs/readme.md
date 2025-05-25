@@ -75,7 +75,7 @@ curl https://usetrmnl.com/api/display --header "access-token:xxxxxx"
 ```
 
 ## Bring your own server (BYOS)
-This repo implements basic BYOS server for one device.<br>
+This repo implements [basic BYOS server](https://docs.usetrmnl.com/go/diy/byos) for one device.<br>
 You can setup it with those steps:
 1. Put your device's MAC value to ENV (can be .env.local). If you don't know it: just put anything and check server logs.
 2. Hold round button on your device for more than5 seconds - you should see connection instructions on screen.
