@@ -80,9 +80,11 @@ You can setup it with those steps:
 1. Put your device's MAC value to ENV (can be .env.local). If you don't know it: just put anything and check server logs.
 2. Hold round button on your device for more than5 seconds - you should see connection instructions on screen.
 3. Connect your phone to wifi called `TRMNL`
-4. On setup choose `use your own server`
+4. On setup choose `Custom server` (see screenshot below)
 5. Check logs of server
 6. If it still `wrong access-token value from device` - you may need to choose `Soft reset` on setup stage
+
+<img src="BYOS_setup.png" alt="BYOS setup" height="400">
 
 
 ---
