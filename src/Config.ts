@@ -6,7 +6,7 @@ export const SERVER_PORT = 3000;
 export const SERVER_HOST = '127.0.0.1'; // use '0.0.0.0' for access via local router
 export const TIMEZONE = 'Europe/Warsaw';
 export const ASSETS_FOLDER = path.join(import.meta.dirname, '..', 'assets');
-
+export const BYOS_DEVICE_MAC = process.env['BYOS_DEVICE_MAC'] && process.env['BYOS_DEVICE_MAC'].length > 5 ? process.env['BYOS_DEVICE_MAC'] : undefined;
 
 function readEnvOrFail(key: string): string {
     const value = process.env[key];

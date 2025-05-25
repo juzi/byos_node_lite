@@ -28,7 +28,7 @@ from any source, and design it with HTML, JSX, CSS.
 **Image** http://localhost:3000/image?secret_key=... <br>
 -- can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
 
-**API** http://localhost:3000/api?secret_key=... <br>
+**API** http://localhost:3000/plugin/redirect?secret_key=... <br>
 -- can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
 
 ## JSX components
@@ -73,6 +73,17 @@ Fetch Screen Content as your device (Developer edition):
 ```
 curl https://usetrmnl.com/api/display --header "access-token:xxxxxx"
 ```
+
+## Bring your own server (BYOS)
+This repo implements basic BYOS server for one device.<br>
+You can setup it with those steps:
+1. Put your device's MAC value to ENV (can be .env.local). If you don't know it: just put anything and check server logs.
+2. Hold round button on your device for more than5 seconds - you should see connection instructions on screen.
+3. Connect your phone to wifi called `TRMNL`
+4. On setup choose `use your own server`
+5. Check logs of server
+6. If it still `wrong access-token value from device` - you may need to choose `Soft reset` on setup stage
+
 
 ---
 Goal of this repo: simple and easy to customize.
