@@ -60,6 +60,14 @@ Cloud, Digital Ocean.
 - it can be run via [Dockerfile](../Dockerfile) or command `npm run start`
 - Better to pass ENV parameters from secure storage that your cloud provider has
 
+Docker example:
+```shell
+docker run --name trmnl-container -p 3000:3000 \
+  -e SECRET_KEY=PUT_YOUR_UNIQUE_SECRET_KEY_HERE \
+  -e PUBLIC_URL_ORIGIN=http://localhost:3000 \
+  trmnl
+```
+
 ## Troubleshooting
 
 Check log of errors on device:
