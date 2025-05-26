@@ -25,11 +25,11 @@ from any source, and design it with HTML, JSX, CSS.
 
 ## Endpoints of server
 
-**Image** http://localhost:3000/image?secret_key=... <br>
--- can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
+**Image** https://yourserver.com/image?secret_key=... <br>
+↑ can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
 
-**API** http://localhost:3000/plugin/redirect?secret_key=... <br>
--- can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
+**JSON** https://yourserver.com/plugin/redirect?secret_key=... <br>
+↑ can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
 
 ## JSX components
 
