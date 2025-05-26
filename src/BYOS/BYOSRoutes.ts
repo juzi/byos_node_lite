@@ -38,7 +38,7 @@ BYOSRoutes.get('/display', async (req, res) => {
         res.status(403).send();
         return;
     }
-    batteryPercentage = calcBattery(req.headers['battery-voltage']);
+    batteryPercentage = calcBattery(Number(req.headers['battery-voltage']));
     res.json({
         // screen wouldn't update if data is not changed
         filename: 'custom-screen-' + await screenHash(),
@@ -49,7 +49,10 @@ BYOSRoutes.get('/display', async (req, res) => {
 
 BYOSRoutes.get('/setup', (req, res) => {
     const macId = getMacId(req);
-    if (!BYOS_DEVICE_MAC || macId !== BYOS_DEVICE_MAC) {
+    if (!BYOS_DEVICE_MAC) {
+        console.error(`[SETUP] [${macId}] device is trying to connect, but BYOS is disabled`);
+    }
+    if (macId !== BYOS_DEVICE_MAC) {
         console.error(`[SETUP] [${macId}] device is tried to connect with other MAC, that allowed - rejected`);
         res.status(403).send();
         return;
@@ -66,7 +69,7 @@ BYOSRoutes.get('/setup', (req, res) => {
 
 export let batteryPercentage = 0;
 
-function calcBattery(voltage) {
+function calcBattery(voltage: number) {
     const minVoltage = 0.45;
     const maxVoltage = 4.05;
     const minPercentage = 10;
