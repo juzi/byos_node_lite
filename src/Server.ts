@@ -57,7 +57,7 @@ app.listen(SERVER_PORT, SERVER_HOST, (error) => {
     if (error) {
         throw error;
     } else {
-        console.log(`Server started. Check it http://${SERVER_HOST}:${SERVER_PORT}/image?secret_key=... OR ${PUBLIC_URL_ORIGIN}/image?secret_key=...`);
+        console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT}/image?secret_key=... OR ${PUBLIC_URL_ORIGIN}/image?secret_key=...`);
     }
 })
 
