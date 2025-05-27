@@ -9,11 +9,14 @@ Goal: simple and easy to customize starter for people who are already familiar w
 
 ## Quick Start
 
-1. Press button `Use this template` on Github or clone this repository
-2. Example of JSX code already in repo and you can change it
-3. Create file .env.local based on .env.example
-3. You can preview result locally `npm run watch`
-5. After changes you should deploy your version of this repo to your server
+1. Press button `Use this template` on Github, or clone this repository
+2. Copy .env.local to .env.example and change values to yours
+3. Run `npm run watch` for local preview
+4. Change [App.tsx](../src/Template/App.tsx) and [PrepareData.ts](../src/Data/PrepareData.ts) to something that you want to display
+
+Later, to display screen on device you would need to [deploy](#your-server), provide [endpoints](#endpoints-for-plugins) in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
+
+--------
 
 ## Technologies used:
 
@@ -22,7 +25,7 @@ Goal: simple and easy to customize starter for people who are already familiar w
 - [Express.js](https://expressjs.com) as API server
 - [TSX](https://tsx.is) for supporting JSX/TSX files
 
-## Endpoints of server
+## Endpoints for plugins
 
 **Image** https://yourserver.com/image?secret_key=... <br>
 ↑ can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
@@ -51,7 +54,7 @@ To render screen you have to [provide a font file](../src/Utils/JSXtoPNG.ts). On
 You can include local images by using [LocalImage](../src/Template/LocalImage.tsx) component or specify public url to
 somewhere.
 
-## Your Server (Production)
+## Your Server
 
 To run your TRMNL server you need any form of server (VM, droplet, pod, instance) somewhere, for example AWS, Google
 Cloud, Digital Ocean.
