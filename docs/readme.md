@@ -1,7 +1,7 @@
 # Image server for TRMNL built with Node.js, JSX and CSS
 Design custom layout, content, retrieve secure data and generate image for your TRMNL screen.
 You can use it via [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin)
-or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins, or run it as own BYOS.
+or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins, or run it as own [BYOS](#bring-your-own-server-byos).
 
 Goal: simple and easy to customize starter for people who are already familiar with the JavaScript and CSS ecosystem.
 
