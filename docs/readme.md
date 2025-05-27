@@ -70,31 +70,23 @@ docker run --name trmnl-container -p 3000:3000 \
   trmnl
 ```
 
-## Troubleshooting
-
-Check log of errors on device:
-
-```
-https://usetrmnl.com/dashboard > top right dropdown > gear icon > scroll down to "Logs"
-```
-
-Fetch Screen Content as your device (Developer edition):
-
-```
-curl https://usetrmnl.com/api/display --header "access-token:xxxxxx"
-```
 
 ## Bring your own server (BYOS)
-This repo implements [basic BYOS server](https://docs.usetrmnl.com/go/diy/byos) for one device.<br>
-You can setup it with those steps:
-1. Put your device's MAC value to ENV (can be .env.local). If you don't know it: just put anything and check server logs.
-2. Hold round button on your device for more than5 seconds - you should see connection instructions on screen.
+You can skip using plugins and connect your device to your server directly by using [BYOS](https://docs.usetrmnl.com/go/diy/byos) mode. After changing configuration to BYOS your device will stop doing API requests to [usetrmnl.com](https://usetrmnl.com) servers. You can even close it in private network for data security.
+
+This repo implements basic BYOS server for one device.<br>
+
+You can enable it with those steps:
+1. Put your device's MAC value to ENV key BYOS_DEVICE_MAC (it can be via .env.local). If you don't know it - you can do this step later.
+2. Hold round button on your device for more than 5 seconds - you should see connection instructions on screen.
 3. Connect your phone to wifi called `TRMNL`
-4. On setup choose `Custom server` (see screenshot below)
-5. Check logs of server
-6. If it still `wrong access-token value from device` - you may need to choose `Soft reset` on setup stage
+4. On setup choose `Custom server` (see screenshot below) and provide address of your server
 
 <img src="BYOS_setup.png" alt="BYOS setup" height="400">
+
+Troubleshooting:
+- To find out MAC address for step 1 you can check logs of server: it will be attempts to connect
+- If you see error `wrong access-token value from device` - you may need to click button `Soft reset` on device setup stage
 
 
 ---
