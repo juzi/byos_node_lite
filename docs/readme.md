@@ -12,7 +12,13 @@ Goal: simple and easy to customize starter for people who are already familiar w
 1. Press button `Use this template` on Github, or clone this repository
 2. Copy .env.local to .env.example and change values to yours
 3. Run `npm run watch` for local preview
-4. Change [App.tsx](../src/Template/App.tsx) and [PrepareData.ts](../src/Data/PrepareData.ts) to something that you want to display
+
+Or run via Docker:
+```shell
+docker build -t trmnl . && docker run --env-file .env.local -p 3000:3000 trmnl
+```
+
+After run, you can change [App.tsx](../src/Template/App.tsx) and [PrepareData.ts](../src/Data/PrepareData.ts) to something that you want to display.
 
 Later, to display screen on device you would need to [deploy](#your-server), provide [endpoints](#endpoints-for-plugins) in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 
@@ -61,15 +67,6 @@ Cloud, Digital Ocean.
 
 - it can be run via [Dockerfile](../Dockerfile) or command `npm run start`
 - Better to pass ENV parameters from secure storage that your cloud provider has
-
-Docker example:
-```shell
-docker run --name trmnl-container -p 3000:3000 \
-  -e SECRET_KEY=PUT_YOUR_UNIQUE_SECRET_KEY_HERE \
-  -e PUBLIC_URL_ORIGIN=http://localhost:3000 \
-  trmnl
-```
-
 
 ## Bring your own server (BYOS)
 You can skip using plugins and connect your device to your server directly by using [BYOS](https://docs.usetrmnl.com/go/diy/byos) mode. After changing configuration to BYOS your device will stop doing API requests to [usetrmnl.com](https://usetrmnl.com) servers. You can even close it in private network for data security.
