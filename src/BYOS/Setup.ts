@@ -22,7 +22,7 @@ export async function setupRoute(macId: string): Promise<SetupResponse> {
     return {
         "status": 200,
         "image_url": '',
-        "api_key": BYOS_DEVICE_ACCESS_TOKEN,
+        "api_key": BYOS_DEVICE_ACCESS_TOKEN ?? '',
         "friendly_id": "TRMNL",
         "message": "Device successfully registered",
     };

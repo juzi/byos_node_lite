@@ -3,6 +3,11 @@
     "noEmit": true,
     "target": "esnext",
     "module": "nodenext",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "strict": true,
+    "erasableSyntaxOnly": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }

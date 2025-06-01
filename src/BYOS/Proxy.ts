@@ -1,11 +1,12 @@
 import {SetupResponse} from "./Setup.js";
 import {DisplayResponse} from "./Display.js";
+import {IncomingHttpHeaders} from "http";
 
 export async function proxySetup(macId: string): Promise<SetupResponse | null> {
     return requestCore('GET', '/api/setup', {id: macId});
 }
 
-export async function proxyDisplay(headers: { [key: string]: string | string[] }): Promise<DisplayResponse | null> {
+export async function proxyDisplay(headers: IncomingHttpHeaders): Promise<DisplayResponse | null> {
     delete headers['host'];
     return requestCore('GET', '/api/display', headers);
 }
@@ -22,7 +23,7 @@ export async function proxyLog(macId: string, accessToken: string, body: {
 async function requestCore(
     method: string,
     path: string,
-    headers: { [key: string]: string | string[] },
+    headers: { [key: string]: string | string[] | undefined },
     body?: {
         [key: string]: any
     }) {

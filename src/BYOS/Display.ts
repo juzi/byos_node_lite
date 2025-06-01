@@ -8,6 +8,7 @@ import {
 import {proxyDisplay} from "./Proxy.js";
 import {screenUrlAndHash} from "../Utils/Screen.js";
 import {updateBattery} from "./Battery.js";
+import {IncomingHttpHeaders} from "http";
 
 export type DisplayResponse = {
     status: number,
@@ -22,9 +23,7 @@ export type DisplayResponse = {
 
 let displayFromProxy = true; // one by one
 
-export async function displayRoute(macId: string, headers: {
-    [key: string]: string | string[]
-}): Promise<DisplayResponse> {
+export async function displayRoute(macId: string, headers: IncomingHttpHeaders): Promise<DisplayResponse> {
     const accessToken = readAccessToken(headers);
     updateBattery(Number(headers['battery-voltage']));
     if (BYOS_PROXY && !displayFromProxy) {
@@ -53,7 +52,7 @@ export async function displayRoute(macId: string, headers: {
     };
 }
 
-async function getProxyResult(headers): Promise<DisplayResponse | null> {
+async function getProxyResult(headers: IncomingHttpHeaders): Promise<DisplayResponse | null> {
     const response = await proxyDisplay(headers);
     if (!response) {
         return null;
@@ -89,7 +88,7 @@ function checkImage(url: string) {
 }
 
 
-function readAccessToken(headers): string {
+function readAccessToken(headers: IncomingHttpHeaders): string {
     if (typeof headers['access-token'] !== 'string') {
         throw new Error('Missing access-token header');
     }

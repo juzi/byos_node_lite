@@ -1,4 +1,5 @@
-import {Router} from 'express';
+import {Router, Request, Response, NextFunction} from 'express';
+import {IncomingHttpHeaders} from 'http';
 import {displayRoute} from "./Display.js";
 import {setupRoute} from "./Setup.js";
 import {logRoute} from "./Log.js";
@@ -7,7 +8,7 @@ import {BYOS_DEVICE_MAC, BYOS_ENABLED} from "../Config.js";
 // all routes starts with /api/
 export const BYOSRoutes = Router();
 
-BYOSRoutes.use((req, res, next) => {
+BYOSRoutes.use((req: Request, res: Response, next: NextFunction) => {
     const macId = getMacId(req);
     if (!BYOS_ENABLED || !BYOS_DEVICE_MAC) {
         console.error(`[BYOS] [${macId}] device is trying to connect, but BYOS is disabled`);
@@ -23,12 +24,12 @@ BYOSRoutes.use((req, res, next) => {
 });
 
 
-BYOSRoutes.get('/setup', async (req, res) => {
+BYOSRoutes.get('/setup', async (req: Request, res: Response) => {
     const macId = getMacId(req);
     res.json(await setupRoute(macId));
 });
 
-BYOSRoutes.get('/display', async (req, res) => {
+BYOSRoutes.get('/display', async (req: Request, res: Response) => {
     const macId = getMacId(req);
     res.json(await displayRoute(macId, req.headers));
 });
@@ -40,14 +41,14 @@ BYOSRoutes.post('/log', async (req, res) => {
     res.status(204).send();
 });
 
-function getMacId(req): string {
-    if (typeof req.headers.id !== 'string') {
+function getMacId(req: Request): string {
+    if (typeof req.headers['id'] !== 'string') {
         throw new Error('Missing id header');
     }
-    return req.headers.id;
+    return req.headers['id'];
 }
 
-function readAccessToken(headers): string {
+function readAccessToken(headers: IncomingHttpHeaders): string {
     if (typeof headers['access-token'] !== 'string') {
         throw new Error('Missing access-token header');
     }

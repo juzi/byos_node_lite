@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request, Response} from "express";
 import {SECRET_KEY, SERVER_HOST, SERVER_PORT, PUBLIC_URL_ORIGIN, BYOS_ENABLED, REFRESH_RATE_SECONDS} from "./Config.js";
 import {buildScreen, screenUrlAndHash} from "./Utils/Screen.js";
 import {BYOSRoutes} from "./BYOS/BYOSRoutes.js";
@@ -10,11 +10,11 @@ if (BYOS_ENABLED) {
     app.use('/api', BYOSRoutes);
 }
 
-app.get('/', (req, res) => {
+app.get('/', (_, res: Response) => {
     res.send();
 })
 
-function isSecretKeyValid(req, res) {
+function isSecretKeyValid(req: Request, res: Response) {
     if (req.query['secret_key'] !== SECRET_KEY) {
         res.setHeader('Content-Type', 'application/json');
         res.status(401).json('Wrong or missing secret_key');
@@ -23,7 +23,7 @@ function isSecretKeyValid(req, res) {
     return true;
 }
 
-app.get('/plugin/redirect', async (req, res) => {
+app.get('/plugin/redirect', async (req: Request, res: Response) => {
     if (!isSecretKeyValid(req, res)) {
         return;
     }
@@ -36,7 +36,7 @@ app.get('/plugin/redirect', async (req, res) => {
     });
 });
 
-app.get('/image', async (req, res) => {
+app.get('/image', async (req: Request, res: Response) => {
     if (!isSecretKeyValid(req, res)) {
         return;
     }
@@ -45,12 +45,12 @@ app.get('/image', async (req, res) => {
     res.send(image1bit);
 })
 
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
     console.log(`[404] ${req.method} ${req.url}`);
     res.status(404).json({error: 'Not Found', message: 'The requested path could not be found: ' + req.url});
 });
 
-app.use((err: Error, req, res, next) => {
+app.use((err: Error, _: Request, res: Response) => {
     console.error(err.stack);
     res.status(500).json({error: 'Internal Server Error', message: 'Something went wrong!'});
 });
