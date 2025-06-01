@@ -9,10 +9,10 @@ export const TIMEZONE = 'Europe/Warsaw';
 export const ASSETS_FOLDER = path.join(import.meta.dirname, '..', 'assets');
 export const ALLOW_FIRMWARE_UPDATE = true;
 export const BUTTON_2_CLICK_FUNCTION = 'sleep'; // https://help.usetrmnl.com/en/articles/9672080-special-functions
-export const BYOS_ENABLED = true;
+export const BYOS_ENABLED = false;
 export const BYOS_DEVICE_MAC = mayReadEnv('BYOS_DEVICE_MAC');
 export const BYOS_DEVICE_ACCESS_TOKEN = mayReadEnv('BYOS_DEVICE_ACCESS_TOKEN');
-export const BYOS_PROXY = true;
+export const BYOS_PROXY = false;
 
 function mayReadEnv(key: string): string | undefined {
     const value = process.env[key];
