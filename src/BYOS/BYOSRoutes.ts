@@ -1,86 +1,44 @@
 import {Router} from 'express';
-import {BYOS_DEVICE_MAC, PUBLIC_URL_ORIGIN, SECRET_KEY} from '../Config.js';
-import {screenHash} from "../Utils/Screen.js";
-import {sha256} from "../Utils/Sha256.js";
+import {displayRoute} from "./Display.js";
+import {setupRoute} from "./Setup.js";
+import {logRoute} from "./Log.js";
+import {BYOS_DEVICE_MAC, BYOS_ENABLED} from "../Config.js";
 
 // all routes starts with /api/
 export const BYOSRoutes = Router();
 
-
-BYOSRoutes.post('/log', (req, res) => {
+BYOSRoutes.use((req, res, next) => {
     const macId = getMacId(req);
-    const data = req.body;
-    if (!data['log'] || !data['log']['logs_array']) {
-        res.status(204).send();
+    if (!BYOS_ENABLED || !BYOS_DEVICE_MAC) {
+        console.error(`[BYOS] [${macId}] device is trying to connect, but BYOS is disabled`);
+        res.status(401).json('BYOS is disabled');
         return;
     }
-    data['log']['logs_array'].map(record => {
-        let ts = record['creation_timestamp'];
-        if (ts) {
-            ts = new Date(ts * 1000).toISOString();
-        }
-        console.log([
-            `[LOG]`,
-            `[${macId}]`,
-            `EVENT_TIME`,
-            ts,
-            record['log_message'],
-            'file:' + record['log_sourcefile'] + ':' + record['log_codeline']
-        ].join(' '))
-    });
-    res.status(204).send();
+    if (macId !== BYOS_DEVICE_MAC) {
+        console.error(`[BYOS] [${macId}] device is tried to connect with other MAC, that allowed - rejected`);
+        res.status(401).json('This MAC is not allowed');
+        return;
+    }
+    next();
+});
+
+
+BYOSRoutes.get('/setup', async (req, res) => {
+    const macId = getMacId(req);
+    res.json(await setupRoute(macId));
 });
 
 BYOSRoutes.get('/display', async (req, res) => {
     const macId = getMacId(req);
-    if (readDeviceKey(req) !== calcProperDeviceApiKey(macId)) {
-        console.error(`[DISPLAY] [${macId}] Wrong access-token value from device: ` + readDeviceKey(req));
-        res.status(403).send();
-        return;
-    }
-    batteryPercentage = calcBattery(Number(req.headers['battery-voltage']));
-    res.json({
-        // screen wouldn't update if data is not changed
-        filename: 'custom-screen-' + await screenHash(),
-        image_url: PUBLIC_URL_ORIGIN + '/image?secret_key=' + SECRET_KEY,
-        refresh_rate: 60, // Seconds. Can be overridden by device settings.
-    });
+    res.json(await displayRoute(macId, req.headers));
 });
 
-BYOSRoutes.get('/setup', (req, res) => {
+BYOSRoutes.post('/log', async (req, res) => {
     const macId = getMacId(req);
-    if (!BYOS_DEVICE_MAC) {
-        console.error(`[SETUP] [${macId}] device is trying to connect, but BYOS is disabled`);
-    }
-    if (macId !== BYOS_DEVICE_MAC) {
-        console.error(`[SETUP] [${macId}] device is tried to connect with other MAC, that allowed - rejected`);
-        res.status(403).send();
-        return;
-    }
-    console.log(`[SETUP] [${macId}] device is trying to connect.`);
-    res.json({
-        "status": 200,
-        "api_key": calcProperDeviceApiKey(macId),
-        "friendly_id": "TRMNL",
-        "message": "Device successfully registered",
-    });
+    const accessToken = readAccessToken(req.headers);
+    await logRoute(macId, accessToken, req.body);
+    res.status(204).send();
 });
-
-
-export let batteryPercentage = 0;
-
-function calcBattery(voltage: number) {
-    const minVoltage = 0.45;
-    const maxVoltage = 4.05;
-    const minPercentage = 10;
-    const maxPercentage = 90;
-    if (voltage <= minVoltage) return minPercentage;
-    if (voltage > maxVoltage) return 100;
-    const percentage = (voltage - minVoltage) / (maxVoltage - minVoltage) *
-        (maxPercentage - minPercentage) + minPercentage;
-    return Math.round(percentage);
-}
-
 
 function getMacId(req): string {
     if (typeof req.headers.id !== 'string') {
@@ -89,13 +47,9 @@ function getMacId(req): string {
     return req.headers.id;
 }
 
-function calcProperDeviceApiKey(macID: string) {
-    return sha256(SECRET_KEY + macID);
-}
-
-function readDeviceKey(req): string {
-    if (typeof req.headers['access-token'] !== 'string') {
+function readAccessToken(headers): string {
+    if (typeof headers['access-token'] !== 'string') {
         throw new Error('Missing access-token header');
     }
-    return req.headers['access-token'];
+    return headers['access-token'];
 }

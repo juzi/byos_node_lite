@@ -75,9 +75,10 @@ This repo implements basic BYOS server for one device.<br>
 
 You can enable it with those steps:
 1. Put your device's MAC value to ENV key BYOS_DEVICE_MAC (it can be via .env.local). If you don't know it - you can do this step later.
-2. Hold round button on your device for more than 5 seconds - you should see connection instructions on screen.
-3. Connect your phone to wifi called `TRMNL`
-4. On setup choose `Custom server` (see screenshot below) and provide address of your server
+2. Generate or use usetrmnl.com access token in ENV key BYOS_DEVICE_ACCESS_TOKEN 
+3. Hold round button on your device for more than 5 seconds - you should see connection instructions on screen.
+4. Connect your phone to wifi called `TRMNL`
+5. On setup choose `Custom server` (see screenshot below) and provide address of your server. In case of local computer in same WiFi network it would be something like http://192.168.0.26:3000
 
 <img src="BYOS_setup.png" alt="BYOS setup" height="400">
 
@@ -85,6 +86,13 @@ Troubleshooting:
 - To find out MAC address for step 1 you can check logs of server: it will be attempts to connect
 - If you see error `wrong access-token value from device` - you may need to click button `Soft reset` on device setup stage
 
+## BYOS Proxy
+You can use both own server with own screen and some plugins from usetrmnl.com (aka core) by using Proxy mode. In this mode you will see your screen, one of screens from core after, and etc, one by one.
+
+You can enable it with those steps:
+1. Set `BYOS_PROXY = true` in Config
+2. Repeat setup process for `BYOS` with doing `soft reset`
+3. Check `access-token` received from usetrmnl.com and change ENV key BYOS_DEVICE_ACCESS_TOKEN to it
 
 ---
 Goal of this repo: simple and easy to customize.

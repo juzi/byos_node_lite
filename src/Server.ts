@@ -1,11 +1,14 @@
 import express from "express";
-import {SECRET_KEY, SERVER_HOST, SERVER_PORT, PUBLIC_URL_ORIGIN} from "./Config.js";
-import {buildScreen, screenHash} from "./Utils/Screen.js";
+import {SECRET_KEY, SERVER_HOST, SERVER_PORT, PUBLIC_URL_ORIGIN, BYOS_ENABLED, REFRESH_RATE_SECONDS} from "./Config.js";
+import {buildScreen, screenUrlAndHash} from "./Utils/Screen.js";
 import {BYOSRoutes} from "./BYOS/BYOSRoutes.js";
 
 const app = express();
 app.use(express.json());
-app.use('/api', BYOSRoutes); // comment this line to disable BYOS
+
+if (BYOS_ENABLED) {
+    app.use('/api', BYOSRoutes);
+}
 
 app.get('/', (req, res) => {
     res.send();
@@ -24,12 +27,12 @@ app.get('/plugin/redirect', async (req, res) => {
     if (!isSecretKeyValid(req, res)) {
         return;
     }
+    const {screenUrl, screenHash} = await screenUrlAndHash();
     res.setHeader('Content-Type', 'application/json');
     res.json({
-        // screen wouldn't update if data is not changed
-        filename: 'custom-screen-' + await screenHash(),
-        url: PUBLIC_URL_ORIGIN + '/image?secret_key=' + SECRET_KEY,
-        refresh_rate: 60, // Seconds. Can be overridden by device settings.
+        filename: 'custom-screen-' + screenHash, // screen wouldn't update if data is not changed
+        url: screenUrl,
+        refresh_rate: REFRESH_RATE_SECONDS,
     });
 });
 
@@ -41,7 +44,6 @@ app.get('/image', async (req, res) => {
     res.setHeader('Content-Type', 'image/bmp');
     res.send(image1bit);
 })
-
 
 app.use((req, res) => {
     console.log(`[404] ${req.method} ${req.url}`);
