@@ -1,4 +1,4 @@
-import {TemplateData} from "../Data/PrepareData.js";
+import {TemplateData} from "../../Data/PrepareData.js";
 import Time from "./Time.js";
 import HackerNews from "./HackerNews.js";
 import Wallpaper from "./Wallpaper.js";

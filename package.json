@@ -5,16 +5,17 @@
   },
   "type": "module",
   "dependencies": {
-    "@resvg/resvg-js": "^2.6.2",
     "express": "^5.1.0",
+    "puppeteer": "^24.9.0",
     "react": "^19.1.0",
-    "satori": "^0.13.1",
+    "react-dom": "^19.1.0",
     "sharp": "^0.34.1",
     "tsx": "^4.19.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.18",
-    "@types/react": "^19.1.4"
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5"
   }
 }

@@ -1,6 +1,6 @@
 import express, {Request, Response} from "express";
 import {SECRET_KEY, SERVER_HOST, SERVER_PORT, PUBLIC_URL_ORIGIN, BYOS_ENABLED, REFRESH_RATE_SECONDS} from "./Config.js";
-import {buildScreen, screenUrlAndHash} from "./Utils/Screen.js";
+import {buildScreen, screenUrlAndHash} from "./Screen/Screen.js";
 import {BYOSRoutes} from "./BYOS/BYOSRoutes.js";
 
 const app = express();

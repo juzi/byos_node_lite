@@ -6,7 +6,7 @@ import {
     REFRESH_RATE_SECONDS,
 } from "../Config.js";
 import {proxyDisplay} from "./Proxy.js";
-import {screenUrlAndHash} from "../Utils/Screen.js";
+import {screenUrlAndHash} from "../Screen/Screen.js";
 import {updateBattery} from "./Battery.js";
 import {IncomingHttpHeaders} from "http";
 

@@ -18,7 +18,7 @@ Or run via Docker:
 docker build -t trmnl . && docker run --env-file .env.local -p 3000:3000 trmnl
 ```
 
-After run, you can change [App.tsx](../src/Template/App.tsx) and [PrepareData.ts](../src/Data/PrepareData.ts) to something that you want to display.
+After run, you can change [App.tsx](../src/Template/JSX/App.tsx) and [PrepareData.ts](../src/Data/PrepareData.ts) to something that you want to display.
 
 Later, to display screen on device you would need to [deploy](#your-server), provide [endpoints](#endpoints-for-plugins) in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 
@@ -42,7 +42,7 @@ Later, to display screen on device you would need to [deploy](#your-server), pro
 ## JSX components
 
 You can use regular JSX components (similar to React), but without hooks, as screen is rendering only once.<br>
-Starting point is [App.tsx](../src/Template/App.tsx) <br>
+Starting point is [App.tsx](../src/Template/JSX/App.tsx) <br>
 It's easier to collect all variables and data [in one place](../src/Data/PrepareData.ts), before components. But you can
 change to any structure that you prefer.
 
@@ -53,11 +53,11 @@ change to any structure that you prefer.
 
 ## Using fonts
 
-To render screen you have to [provide a font file](../src/Utils/JSXtoPNG.ts). One is [attached by default](../assets/fonts/).
+To render screen you have to [provide a font file](../src/Screen/JSXtoPNG.ts). One is [attached by default](../assets/fonts/).
 
 ## Including images
 
-You can include local images by using [LocalImage](../src/Template/LocalImage.tsx) component or specify public url to
+You can include local images by using [LocalImage](../src/Template/JSX/LocalImage.tsx) component or specify public url to
 somewhere.
 
 ## Your Server
