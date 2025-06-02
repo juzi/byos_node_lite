@@ -143,5 +143,5 @@ You can enable it with those steps:
 2. Repeat setup process for `BYOS` with doing `soft reset`
 3. Check `access-token` received from usetrmnl.com and change ENV key BYOS_DEVICE_ACCESS_TOKEN to it
 
----
-Goal of this repo: simple and easy to customize.
+## CONTRIBUTING
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
