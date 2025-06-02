@@ -1,4 +1,5 @@
 {
+  "name": "byos_node_lite",
   "scripts": {
     "start": "tsx --env-file=.env.local src/Server.ts",
     "watch": "tsx watch --env-file=.env.local src/Server.ts"
