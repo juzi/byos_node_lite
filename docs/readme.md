@@ -60,7 +60,8 @@ in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 ## Liquid templates
 For putting variables into HTML we use  Liquid templating library (same as TRMNL).<br>
 Its a great option for moving custom plugins from usetrmnl.com to your own server.<br>
-Liquid files are in `src/Template` directory with `.liquid` extension. Most of their contents is regular HTML.
+Liquid files are in `src/Template` directory with `.liquid` extension. Most of their contents is regular HTML.<br>
+[Liquid 101 article](https://help.usetrmnl.com/en/articles/10671186-liquid-101) from TRMNL.<br>
 See example [here](../src/Template/HackerNews.liquid)
 
 ## JSX components
