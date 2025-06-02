@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "express": "^5.1.0",
+    "liquidjs": "^10.21.1",
     "puppeteer": "^24.9.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

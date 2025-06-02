@@ -7,6 +7,7 @@ export const SERVER_HOST = '0.0.0.0';
 export const REFRESH_RATE_SECONDS = 60;
 export const TIMEZONE = 'Europe/Warsaw';
 export const ASSETS_FOLDER = path.join(import.meta.dirname, '..', 'assets');
+export const TEMPLATE_FOLDER = path.join(import.meta.dirname, '/', 'Template');
 export const ALLOW_FIRMWARE_UPDATE = true;
 export const BUTTON_2_CLICK_FUNCTION = 'sleep'; // https://help.usetrmnl.com/en/articles/9672080-special-functions
 export const BYOS_ENABLED = false;

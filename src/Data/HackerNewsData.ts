@@ -14,7 +14,7 @@ export type HackerNewsData = {
 export async function getHackerNews(): Promise<HackerNewsData> {
     const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
     let ids: number[] = await response.json();
-    ids = ids.slice(0, 10);
+    ids = ids.slice(0, 20);
     return Promise.all(ids.map(async (id) => {
         const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
         return response.json();
