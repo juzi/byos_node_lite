@@ -9,6 +9,18 @@ Goal: simple and easy to customize starter for people who are already familiar w
 
 <img src="preview.png" alt="preview">
 
+## Features
+- Creating screens with JSX or HTML(Liquid)
+- Generating screen (image) with preview
+- JSON Data API
+- BYOS (Auto-Provisioning, screens, device logs)
+- Migrating any Plugin (via Liquid) 
+- Playlists (set of screens)
+- Proxying screens (plugins) from Core
+- Docker
+- no database required (everything in ENV and Config)
+- no dashboard
+
 ## Quick Start
 
 1. Press button `Use this template` on Github, or clone this repository
