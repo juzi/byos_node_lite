@@ -10,11 +10,12 @@ Goal: simple and easy to customize starter for people who are already familiar w
 <img src="preview.png" alt="preview">
 
 ## Features
-- Creating screens with JSX or HTML(Liquid)
+- Creating screens with JSX or HTML (Liquid)
+- Design Framework from TRMNL
 - Generating screen (image) with preview
 - JSON Data API
-- BYOS (Auto-Provisioning, screens, device logs)
-- Migrating any Plugin (via Liquid) 
+- BYOS (auto-provisioning, screens, device logs)
+- Migrating any Plugin (they are in Liquid) 
 - Playlists (set of screens)
 - Proxying screens (plugins) from Core
 - Docker
@@ -57,7 +58,10 @@ in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 ↑ can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
 
 ## Liquid templates
-see example [here](../src/Template/HackerNews.liquid)
+For putting variables into HTML we use  Liquid templating library (same as TRMNL).<br>
+Its a great option for moving custom plugins from usetrmnl.com to your own server.<br>
+Liquid files are in `src/Template` directory with `.liquid` extension. Most of their contents is regular HTML.
+See example [here](../src/Template/HackerNews.liquid)
 
 ## JSX components
 
@@ -67,6 +71,29 @@ see example [here](../src/Template/HackerNews.liquid)
   can change to any structure that you prefer.
 - You can include local images by using [LocalImage](../src/Template/JSX/LocalImage.tsx) component or specify public url
   to somewhere.
+
+## Design Framework
+You have full support of JavaScript and CSS, so you can use [Framework](https://usetrmnl.com/framework) by TRMNL:
+```html
+<html>
+<head>
+    <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
+    <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+</head>
+<body class="environment trmnl">
+<div class="screen">
+    <div class="view view--full">
+        <div class="layout">
+            <div class="columns">
+                <div class="column">
+                    ...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+See example in [HackerNews.liquid](../src/Template/HackerNews.liquid)
 
 ## Your Server
 
