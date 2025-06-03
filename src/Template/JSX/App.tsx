@@ -1,7 +1,6 @@
 import {TemplateDataType} from "../../Data/PrepareData.js";
 import Time from "./Time.js";
 import HackerNews from "./HackerNews.js";
-import Wallpaper from "./Wallpaper.js";
 
 export let templateData: TemplateDataType;
 
@@ -10,6 +9,7 @@ export default function App(data: TemplateDataType) {
     return <div style={{
         fontSize: 22,
         display: 'flex',
+        backgroundColor: '#fff',
         width: '800px',
         height: '480px',
     }}>
@@ -17,6 +17,8 @@ export default function App(data: TemplateDataType) {
             <Time style={{alignSelf: 'flex-start'}}/>
             <HackerNews style={{width: '100%', height: '100%'}}/>
         </div>
-        <Wallpaper style={{width: '50%', height: '100%'}}/>
+        <div style={{width: '50%', overflow: 'hidden'}}>
+            <img style={{height: '100%', marginLeft: '-160px'}} src='/assets/images/wallpaper.jpeg'/>
+        </div>
     </div>
 }

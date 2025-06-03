@@ -5,7 +5,7 @@ import {TemplateDataType} from "../Data/PrepareData.js";
 const engine = new Liquid({
     root: TEMPLATE_FOLDER,
     extname: '.liquid',
-    cache: true,
+    // cache: true,
     dynamicPartials: true,
     strictFilters: true,
     strictVariables: true,

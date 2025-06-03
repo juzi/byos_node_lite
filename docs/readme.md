@@ -85,18 +85,18 @@ You have full support of JavaScript and CSS, so you can use [Framework](https://
 </head>
 <body class="environment trmnl">
 <div class="screen">
-    <div class="view view--full">
-        <div class="layout">
-            <div class="columns">
-                <div class="column">
-                    ...
-                </div>
-            </div>
-        </div>
-    </div>
+    ...
 </div>
 ```
-See example in [HackerNews.liquid](../src/Template/HackerNews.liquid)
+See [Header](../src/Template/Header.html) for adding styles, fonts, etc and screen (plugin) example [HackerNews.liquid](../src/Template/HackerNews.liquid)
+
+## Images and other static files
+You use any static files in folder [assets](../assets) - at moment of screen rendering they will be matched with relative links in HTML, that started with '/assets/...' 
+
+Example:
+```html
+<img src='/assets/images/wallpaper.jpeg'/>
+```
 
 ## Your Server
 
