@@ -131,6 +131,7 @@ You can enable it with those steps:
 Troubleshooting:
 
 - If you see `[404] GET /api/display` in logs - then you might forgot to enable BYOS in [Config](../src/Config.ts)
+- If you see `Failed to check image` - maybe you forgot to change `PUBLIC_URL_ORIGIN` in ENV
 - To find out MAC address for step 1 you can check logs of server: it will be attempts to connect
 - If you see error `wrong access-token value from device` - you may need to click button `Soft reset` on device setup
   stage
