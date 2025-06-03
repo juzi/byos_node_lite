@@ -26,9 +26,11 @@ Goal: simple and easy to customize starter for people who are already familiar w
 
 1. Press button `Use this template` on Github, or clone this repository
 2. Copy .env.local to .env.example and change values to yours
-3. Run `npm run watch` for local preview
+3. (optional) setup local Node.js and NPM, for example via [nvm](https://github.com/nvm-sh/nvm)
+4. Run `npm run watch`
+5. See preview of the screen in browser https://127.0.0.1:3000/image?secret_key=...
 
-Or run via Docker:
+Or run it via Docker:
 
 ```shell
 docker build --no-cache -t trmnl . && docker run --env-file .env.local -p 3000:3000 trmnl
