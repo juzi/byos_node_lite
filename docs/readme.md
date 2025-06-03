@@ -31,7 +31,7 @@ Goal: simple and easy to customize starter for people who are already familiar w
 Or run via Docker:
 
 ```shell
-docker build -t trmnl . && docker run --env-file .env.local -p 3000:3000 trmnl
+docker build --no-cache -t trmnl . && docker run --env-file .env.local -p 3000:3000 trmnl
 ```
 
 After run, you can change files in `src/Template` and `src/Data` to something that you want to display.
