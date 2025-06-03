@@ -1,11 +1,11 @@
 import {prepareData, TemplateDataType} from "../Data/PrepareData.js";
 import {PNGto1BIT} from "./PNGto1BIT.js";
-import {sha256} from "./Sha256.js";
 import {PUBLIC_URL_ORIGIN, SECRET_KEY} from "../Config.js";
 import App from "../Template/JSX/App.js";
 import {renderToImage} from "./RenderHTML.js";
 import {buildLiquid} from "./BuildLiquid.js";
 import {buildJSX} from "./BuildJSX.js";
+import crypto from "crypto";
 
 
 const screens = [
@@ -26,6 +26,7 @@ export async function buildScreen() {
 export async function screenUrlAndHash() {
     const screenUrl = PUBLIC_URL_ORIGIN + '/image?secret_key=' + SECRET_KEY;
     // TODO hash of proper screen
-    const screenHash = sha256(await buildScreen());
+    const image = await buildScreen();
+    const screenHash = crypto.createHash('sha256').update(image).digest('hex');
     return {screenUrl, screenHash};
 }
