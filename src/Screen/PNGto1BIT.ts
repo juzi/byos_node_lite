@@ -1,15 +1,8 @@
 import sharp from "sharp";
 
-//         contain: 'contain';
-//         cover: 'cover';
-//         fill: 'fill';
-//         inside: 'inside';
-//         outside: 'outside';
-
 export async function PNGto1BIT(image: Buffer) {
     const data = await sharp(image)
         .grayscale()
-        .threshold(128)
         .raw()
         .toBuffer();
 
