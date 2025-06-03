@@ -43,7 +43,7 @@ in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 
 ## Technologies used:
 
-- [Headless Chrome](https://www.npmjs.com/package/puppeteer) for rendering HTML or JSX to image
+- [Headless Chrome](https://pptr.dev) for rendering HTML or JSX to image
 - [Liquid](https://shopify.github.io/liquid/) for HTML templating (same used by usetrmnl.com)
 - [React](https://react.dev/reference/react-dom/server/renderToString) if you want to use JSX components
 - [Express.js](https://expressjs.com) as API server
