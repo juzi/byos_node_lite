@@ -9,6 +9,7 @@ import {
 } from "./Config.js";
 import {buildScreen, checkImage, getScreenHash} from "./Screen/Screen.js";
 import {BYOSRoutes} from "./BYOS/BYOSRoutes.js";
+import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "./Routes.js";
 
 const app = express();
 app.use(express.json());
@@ -30,7 +31,7 @@ function isSecretKeyValid(req: Request, res: Response) {
     return true;
 }
 
-app.get('/plugin/redirect', async (req: Request, res: Response) => {
+app.get(ROUTE_PLUGIN_REDIRECT, async (req: Request, res: Response) => {
     if (!isSecretKeyValid(req, res)) {
         return;
     }
@@ -42,7 +43,7 @@ app.get('/plugin/redirect', async (req: Request, res: Response) => {
     });
 });
 
-app.get('/image', async (req: Request, res: Response) => {
+app.get(ROUTE_IMAGE, async (req: Request, res: Response) => {
     if (!isSecretKeyValid(req, res)) {
         return;
     }
@@ -65,7 +66,7 @@ app.listen(SERVER_PORT, SERVER_HOST, (error) => {
     if (error) {
         throw error;
     } else {
-        console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT}/image?secret_key=... OR ${SCREEN_URL}`);
+        console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT + ROUTE_IMAGE}?secret_key=... OR ${SCREEN_URL}`);
         checkImage(SCREEN_URL);
     }
 })

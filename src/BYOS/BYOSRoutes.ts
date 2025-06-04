@@ -4,6 +4,7 @@ import {displayRoute} from "./Display.js";
 import {setupRoute} from "./Setup.js";
 import {logRoute} from "./Log.js";
 import {BYOS_DEVICE_MAC, BYOS_ENABLED} from "../Config.js";
+import {ROUTE_BYOS_DISPLAY, ROUTE_BYOS_LOG, ROUTE_BYOS_SETUP} from "../Routes.js";
 
 // all routes starts with /api/
 export const BYOSRoutes = Router();
@@ -24,17 +25,17 @@ BYOSRoutes.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 
-BYOSRoutes.get('/setup', async (req: Request, res: Response) => {
+BYOSRoutes.get(ROUTE_BYOS_SETUP.slice(4), async (req: Request, res: Response) => {
     const macId = getMacId(req);
     res.json(await setupRoute(macId));
 });
 
-BYOSRoutes.get('/display', async (req: Request, res: Response) => {
+BYOSRoutes.get(ROUTE_BYOS_DISPLAY.slice(4), async (req: Request, res: Response) => {
     const macId = getMacId(req);
     res.json(await displayRoute(macId, req.headers));
 });
 
-BYOSRoutes.post('/log', async (req, res) => {
+BYOSRoutes.post(ROUTE_BYOS_LOG.slice(4), async (req, res) => {
     const macId = getMacId(req);
     const accessToken = readAccessToken(req.headers);
     await logRoute(macId, accessToken, req.body);

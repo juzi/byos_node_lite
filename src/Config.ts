@@ -1,8 +1,9 @@
 import * as path from "node:path";
+import {ROUTE_IMAGE} from "./Routes.js";
 
 export const SECRET_KEY = readEnvOrFail('SECRET_KEY');
 export const PUBLIC_URL_ORIGIN = readEnvOrFail('PUBLIC_URL_ORIGIN');
-export const SCREEN_URL = PUBLIC_URL_ORIGIN + '/image?secret_key=' + SECRET_KEY;
+export const SCREEN_URL = PUBLIC_URL_ORIGIN + ROUTE_IMAGE + '?secret_key=' + SECRET_KEY;
 export const SERVER_PORT = 3000;
 export const SERVER_HOST = '0.0.0.0';
 export const REFRESH_RATE_SECONDS = 60;

@@ -51,13 +51,19 @@ in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 - [Express.js](https://expressjs.com) as API server
 - [TSX](https://tsx.is) for supporting JSX/TSX files
 
-## Endpoints for plugins
-
+## Endpoints
 **Image** https://yourserver.com/image?secret_key=... <br>
 ↑ can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
 
 **JSON** https://yourserver.com/plugin/redirect?secret_key=... <br>
 ↑ can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
+
+For BYOS work routes are:
+```code
+/api/setup - auto-provisioning of new device
+/api/display - JSON with link to Image endpoint
+/api/log - receiving logs and displayind them app logs (stdout)
+```
 
 ## Liquid templates
 For putting variables into HTML we use  Liquid templating library (same as TRMNL).<br>
