@@ -31,7 +31,7 @@ page.on('request', async (interceptedRequest) => {
 
 
 export async function renderToImage(html: string) {
-    await page.setContent(html, {waitUntil: "networkidle0"});
+    await page.setContent(html, {waitUntil: "load"});
     const image: Uint8Array = await page.screenshot();
     return Buffer.from(image);
 }
