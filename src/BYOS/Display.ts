@@ -3,10 +3,10 @@ import {
     BUTTON_2_CLICK_FUNCTION,
     BYOS_DEVICE_ACCESS_TOKEN,
     BYOS_PROXY,
-    REFRESH_RATE_SECONDS,
+    REFRESH_RATE_SECONDS, SCREEN_URL,
 } from "../Config.js";
 import {proxyDisplay} from "./Proxy.js";
-import {screenUrlAndHash} from "../Screen/Screen.js";
+import {checkImage, getScreenHash} from "../Screen/Screen.js";
 import {updateBattery} from "./Battery.js";
 import {IncomingHttpHeaders} from "http";
 
@@ -38,12 +38,10 @@ export async function displayRoute(macId: string, headers: IncomingHttpHeaders):
         console.error(`[DISPLAY] [${macId}] Wrong access-token value from device: ${accessToken}`);
         throw new Error('Wrong access-token value from device');
     }
-    const {screenUrl, screenHash} = await screenUrlAndHash();
-    checkImage(screenUrl);
     return {
         status: 0,
-        filename: 'custom-screen-' + screenHash, // screen wouldn't update if data is not changed
-        image_url: screenUrl,
+        filename: 'custom-screen-' + await getScreenHash(), // screen wouldn't update if data is not changed
+        image_url: SCREEN_URL,
         refresh_rate: REFRESH_RATE_SECONDS,
         reset_firmware: false,
         update_firmware: false,
@@ -71,20 +69,6 @@ async function getProxyResult(headers: IncomingHttpHeaders): Promise<DisplayResp
         }
     }
     return response;
-}
-
-function checkImage(url: string) {
-    fetch(url).then(
-        async (response) => {
-            if (!response.ok) {
-                console.error('Failed to check image ' + url);
-            }
-            const data = await response.text();
-            if (data.length < 1000) {
-                console.error('Failed to check image ' + url);
-            }
-        }
-    ).catch(() => console.error('Failed to check image ' + url));
 }
 
 

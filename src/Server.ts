@@ -1,6 +1,13 @@
 import express, {Request, Response} from "express";
-import {SECRET_KEY, SERVER_HOST, SERVER_PORT, PUBLIC_URL_ORIGIN, BYOS_ENABLED, REFRESH_RATE_SECONDS} from "./Config.js";
-import {buildScreen, screenUrlAndHash} from "./Screen/Screen.js";
+import {
+    SECRET_KEY,
+    SERVER_HOST,
+    SERVER_PORT,
+    BYOS_ENABLED,
+    REFRESH_RATE_SECONDS,
+    SCREEN_URL
+} from "./Config.js";
+import {buildScreen, checkImage, getScreenHash} from "./Screen/Screen.js";
 import {BYOSRoutes} from "./BYOS/BYOSRoutes.js";
 
 const app = express();
@@ -27,11 +34,10 @@ app.get('/plugin/redirect', async (req: Request, res: Response) => {
     if (!isSecretKeyValid(req, res)) {
         return;
     }
-    const {screenUrl, screenHash} = await screenUrlAndHash();
     res.setHeader('Content-Type', 'application/json');
     res.json({
-        filename: 'custom-screen-' + screenHash, // screen wouldn't update if data is not changed
-        url: screenUrl,
+        filename: 'custom-screen-' + await getScreenHash(), // screen wouldn't update if data is not changed
+        url: SCREEN_URL,
         refresh_rate: REFRESH_RATE_SECONDS,
     });
 });
@@ -59,7 +65,8 @@ app.listen(SERVER_PORT, SERVER_HOST, (error) => {
     if (error) {
         throw error;
     } else {
-        console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT}/image?secret_key=... OR ${PUBLIC_URL_ORIGIN}/image?secret_key=...`);
+        console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT}/image?secret_key=... OR ${SCREEN_URL}`);
+        checkImage(SCREEN_URL);
     }
 })
 

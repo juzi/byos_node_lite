@@ -1,6 +1,6 @@
 import {prepareData, TemplateDataType} from "../Data/PrepareData.js";
 import {PNGto1BIT} from "./PNGto1BIT.js";
-import {PUBLIC_URL_ORIGIN, SECRET_KEY, TEMPLATE_FOLDER} from "../Config.js";
+import {TEMPLATE_FOLDER} from "../Config.js";
 import App from "../Template/JSX/App.js";
 import {renderToImage} from "./RenderHTML.js";
 import {buildLiquid} from "./BuildLiquid.js";
@@ -24,10 +24,23 @@ export async function buildScreen() {
     return PNGto1BIT(image);
 }
 
-export async function screenUrlAndHash() {
-    const screenUrl = PUBLIC_URL_ORIGIN + '/image?secret_key=' + SECRET_KEY;
-    // TODO hash of proper screen
+export async function getScreenHash() {
     const image = await buildScreen();
-    const screenHash = crypto.createHash('sha256').update(image).digest('hex');
-    return {screenUrl, screenHash};
+    return crypto.createHash('sha256').update(image).digest('hex');
+}
+
+export function checkImage(url: string) {
+    fetch(url)
+        .then(
+            async (response) => {
+                if (!response.ok) {
+                    console.error(`Failed to check image ${url} - got ${response.status} code`);
+                }
+                const data = await response.text();
+                if (data.length < 1000) {
+                    console.error(`Failed to check image ${url} - no content`);
+                }
+            }
+        )
+        .catch((error) => console.error(`Failed to check image ${url} - ${error.message}`));
 }
