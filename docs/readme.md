@@ -1,7 +1,10 @@
 # Image server for TRMNL built with Node.js, JSX and HTML
-You can create TRMNL screen just like website: collect data with JavaScript and design layout with JSX(React) or HTML with Liquid templates.
 
-This repository generates an image that you can use via [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin)
+You can create TRMNL screen just like website: collect data with JavaScript and design layout with JSX(React) or HTML
+with Liquid templates.
+
+This repository generates an image that you can use
+via [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin)
 or [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugins, or run it as
 own [BYOS](#bring-your-own-server-byos).
 
@@ -10,12 +13,13 @@ Goal: simple and easy to customize starter for people who are already familiar w
 <img src="preview.png" alt="preview">
 
 ## Features
+
 - Creating screens with JSX or HTML (Liquid)
 - Design Framework from TRMNL
 - Generating screen (image) with preview
 - JSON Data API
 - BYOS (auto-provisioning, screens, device logs)
-- Migrating any Plugin (they are in Liquid) 
+- Migrating any Plugin (they are in Liquid)
 - Playlists (set of screens)
 - Proxying screens (plugins) from Core
 - Docker
@@ -52,6 +56,7 @@ in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 - [TSX](https://tsx.is) for supporting JSX/TSX files
 
 ## Endpoints
+
 **Image** https://yourserver.com/image?secret_key=... <br>
 ↑ can be used for preview and [Alias](https://help.usetrmnl.com/en/articles/10701448-alias-plugin) plugin
 
@@ -59,6 +64,7 @@ in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 ↑ can be used for [Redirect](https://help.usetrmnl.com/en/articles/11035846-redirect-plugin) plugin
 
 For BYOS work routes are:
+
 ```code
 /api/setup - auto-provisioning of new device
 /api/display - JSON with link to Image endpoint
@@ -66,7 +72,8 @@ For BYOS work routes are:
 ```
 
 ## Liquid templates
-For putting variables into HTML we use  Liquid templating library (same as TRMNL).<br>
+
+For putting variables into HTML we use Liquid templating library (same as TRMNL).<br>
 Its a great option for moving custom plugins from usetrmnl.com to your own server.<br>
 Liquid files are in `src/Template` directory with `.liquid` extension. Most of their contents is regular HTML.<br>
 [Liquid 101 article](https://help.usetrmnl.com/en/articles/10671186-liquid-101) from TRMNL.<br>
@@ -76,12 +83,15 @@ See example [here](../src/Template/HackerNews.liquid)
 
 - You can use regular JSX components (similar to React), but without hooks, as screen is rendering only once
 - Starting point is [App.tsx](../src/Template/JSX/App.tsx)
-- It's easier to collect all variables and data [in one place](../src/Data/PrepareData.ts), before components. But you
-  can change to any structure that you prefer.
+
+After choosing between Liquid and JSX, you can disable another in [Screen.ts](../src/Screen/Screen.ts)
 
 ## Design Framework
+
 You have full support of JavaScript and CSS, so you can use [Framework](https://usetrmnl.com/framework) by TRMNL:
+
 ```html
+
 <html>
 <head>
     <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
@@ -92,15 +102,26 @@ You have full support of JavaScript and CSS, so you can use [Framework](https://
     ...
 </div>
 ```
-See [Header](../src/Template/Header.html) for adding styles, fonts, etc and screen (plugin) example [HackerNews.liquid](../src/Template/HackerNews.liquid)
+
+See [Header](../src/Template/Header.html) for adding styles, fonts, etc and screen (plugin)
+example [HackerNews.liquid](../src/Template/HackerNews.liquid)
 
 ## Images and other static files
-You use any static files in folder [assets](../assets) - at moment of screen rendering they will be matched with relative links in HTML, that started with '/assets/...' 
+
+You use any static files in folder [assets](../assets) - at moment of screen rendering they will be matched with
+relative links in HTML, that started with '/assets/...'
 
 Example:
+
 ```html
 <img src='/assets/images/wallpaper.jpeg'/>
 ```
+
+## Data for Templates
+
+It's easier to collect all variables and data in one place, before using it in templates.<br>
+You can collect it in any methods or files and assemble results in in [PrepareData.ts](../src/Data/PrepareData.ts).<br>
+Example: [getting HackerNews posts](../src/Data/HackerNewsData.ts).
 
 ## Your Server
 
@@ -152,4 +173,5 @@ You can enable it with those steps:
 3. Check `access-token` received from usetrmnl.com and change ENV key BYOS_DEVICE_ACCESS_TOKEN to it
 
 ## CONTRIBUTING
+
 See [CONTRIBUTING.md](./CONTRIBUTING.md)
