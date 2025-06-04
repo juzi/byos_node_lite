@@ -38,7 +38,7 @@ docker build --no-cache -t trmnl . && docker run --env-file .env.local -p 3000:3
 
 After run, you can change files in `src/Template` and `src/Data` to something that you want to display.
 
-Later, to display screen on device you would need to [deploy](#your-server), provide [endpoints](#endpoints-for-plugins)
+Later, to display screen on device you would need to [deploy](#your-server), provide [endpoints](#endpoints)
 in plugin settings, or setup your device to [BYOS](#bring-your-own-server-byos).
 
 --------
@@ -74,12 +74,10 @@ See example [here](../src/Template/HackerNews.liquid)
 
 ## JSX components
 
-- You can use regular JSX components (similar to React), but without hooks, as screen is rendering only once.<br>
-- Starting point is [App.tsx](../src/Template/JSX/App.tsx) <br>
+- You can use regular JSX components (similar to React), but without hooks, as screen is rendering only once
+- Starting point is [App.tsx](../src/Template/JSX/App.tsx)
 - It's easier to collect all variables and data [in one place](../src/Data/PrepareData.ts), before components. But you
   can change to any structure that you prefer.
-- You can include local images by using [LocalImage](../src/Template/JSX/LocalImage.tsx) component or specify public url
-  to somewhere.
 
 ## Design Framework
 You have full support of JavaScript and CSS, so you can use [Framework](https://usetrmnl.com/framework) by TRMNL:
