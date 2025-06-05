@@ -6,7 +6,7 @@ import {
     REFRESH_RATE_SECONDS, SCREEN_URL,
 } from "Config.js";
 import {proxyDisplay} from "./Proxy.js";
-import {checkImage, getScreenHash} from "Screen/Screen.js";
+import {checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {updateBattery} from "./Battery.js";
 import {IncomingHttpHeaders} from "http";
 
@@ -62,7 +62,7 @@ async function getProxyResult(headers: IncomingHttpHeaders): Promise<DisplayResp
     response.refresh_rate = REFRESH_RATE_SECONDS;
     response.special_function = BUTTON_2_CLICK_FUNCTION;
     if (response.image_url) {
-        checkImage(response.image_url);
+        checkImageUrl(response.image_url);
     } else {
         if (!response.update_firmware && !response.reset_firmware) {
             return null;

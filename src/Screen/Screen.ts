@@ -29,7 +29,7 @@ export async function getScreenHash() {
     return crypto.createHash('sha256').update(image).digest('hex');
 }
 
-export async function checkImage(url: string): Promise<boolean> {
+export async function checkImageUrl(url: string): Promise<boolean> {
     let response;
     try {
         response = await fetch(url);

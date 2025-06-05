@@ -7,11 +7,11 @@ import {
     REFRESH_RATE_SECONDS,
     SCREEN_URL
 } from "Config.js";
-import {buildScreen, checkImage, getScreenHash} from "Screen/Screen.js";
+import {buildScreen, checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {BYOSRoutes} from "BYOS/BYOSRoutes.js";
 import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
 
-const app = express();
+export const app = express();
 app.use(express.json());
 
 if (BYOS_ENABLED) {
@@ -67,7 +67,7 @@ app.listen(SERVER_PORT, SERVER_HOST, (error) => {
         throw error;
     } else {
         console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT + ROUTE_IMAGE}?secret_key=... OR ${SCREEN_URL}`);
-        checkImage(SCREEN_URL);
+        checkImageUrl(SCREEN_URL);
     }
 })
 
