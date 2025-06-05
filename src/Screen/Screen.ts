@@ -29,18 +29,22 @@ export async function getScreenHash() {
     return crypto.createHash('sha256').update(image).digest('hex');
 }
 
-export function checkImage(url: string) {
-    fetch(url)
-        .then(
-            async (response) => {
-                if (!response.ok) {
-                    console.error(`Failed to check image ${url} - got ${response.status} code`);
-                }
-                const data = await response.text();
-                if (data.length < 1000) {
-                    console.error(`Failed to check image ${url} - no content`);
-                }
-            }
-        )
-        .catch((error) => console.error(`Failed to check image ${url} - ${error.message}`));
+export async function checkImage(url: string): Promise<boolean> {
+    let response;
+    try {
+        response = await fetch(url);
+    } catch (error: any) {
+        console.error(`Failed to check image ${url} - ${error.message}`);
+        return false;
+    }
+    if (!response.ok) {
+        console.error(`Failed to check image ${url} - got ${response.status} code`);
+        return false;
+    }
+    const data = await response.text();
+    if (data.length < 1000) {
+        console.error(`Failed to check image ${url} - no content`);
+        return false;
+    }
+    return true;
 }
