@@ -1,4 +1,4 @@
-import {TIMEZONE} from "../Config.js";
+import {TIMEZONE} from "Config.js";
 import {getHackerNews, HackerNewsData} from "./HackerNewsData.js";
 
 export type TemplateDataType = {

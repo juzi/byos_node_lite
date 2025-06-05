@@ -1,4 +1,4 @@
-import {TemplateDataType} from "../../Data/PrepareData.js";
+import {TemplateDataType} from "Data/PrepareData.js";
 import Time from "./Time.js";
 import HackerNews from "./HackerNews.js";
 

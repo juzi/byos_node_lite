@@ -4,9 +4,9 @@ import {
     BYOS_DEVICE_ACCESS_TOKEN,
     BYOS_PROXY,
     REFRESH_RATE_SECONDS, SCREEN_URL,
-} from "../Config.js";
+} from "Config.js";
 import {proxyDisplay} from "./Proxy.js";
-import {checkImage, getScreenHash} from "../Screen/Screen.js";
+import {checkImage, getScreenHash} from "Screen/Screen.js";
 import {updateBattery} from "./Battery.js";
 import {IncomingHttpHeaders} from "http";
 

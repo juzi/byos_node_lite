@@ -1,5 +1,5 @@
 import {proxyLog} from "./Proxy.js";
-import {BYOS_PROXY} from "../Config.js";
+import {BYOS_PROXY} from "Config.js";
 
 export async function logRoute(macId: string, accessToken: string, body: any) {
     body['log']['logs_array'].map((record: any) => {

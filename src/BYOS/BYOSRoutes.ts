@@ -3,8 +3,8 @@ import {IncomingHttpHeaders} from 'http';
 import {displayRoute} from "./Display.js";
 import {setupRoute} from "./Setup.js";
 import {logRoute} from "./Log.js";
-import {BYOS_DEVICE_MAC, BYOS_ENABLED} from "../Config.js";
-import {ROUTE_BYOS_DISPLAY, ROUTE_BYOS_LOG, ROUTE_BYOS_SETUP} from "../Routes.js";
+import {BYOS_DEVICE_MAC, BYOS_ENABLED} from "Config.js";
+import {ROUTE_BYOS_DISPLAY, ROUTE_BYOS_LOG, ROUTE_BYOS_SETUP} from "Routes.js";
 
 // all routes starts with /api/
 export const BYOSRoutes = Router();

@@ -1,4 +1,4 @@
-import {BYOS_DEVICE_ACCESS_TOKEN, BYOS_PROXY} from "../Config.js";
+import {BYOS_DEVICE_ACCESS_TOKEN, BYOS_PROXY} from "Config.js";
 import {proxySetup} from "./Proxy.js";
 
 export type SetupResponse = {

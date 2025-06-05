@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import fs from 'fs/promises';
-import {ASSETS_FOLDER} from "../Config.js";
+import {ASSETS_FOLDER} from "Config.js";
 
 export const BASE_URL_CHROME = 'http://localhost';
 

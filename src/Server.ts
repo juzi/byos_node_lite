@@ -6,10 +6,10 @@ import {
     BYOS_ENABLED,
     REFRESH_RATE_SECONDS,
     SCREEN_URL
-} from "./Config.js";
-import {buildScreen, checkImage, getScreenHash} from "./Screen/Screen.js";
-import {BYOSRoutes} from "./BYOS/BYOSRoutes.js";
-import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "./Routes.js";
+} from "Config.js";
+import {buildScreen, checkImage, getScreenHash} from "Screen/Screen.js";
+import {BYOSRoutes} from "BYOS/BYOSRoutes.js";
+import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
 
 const app = express();
 app.use(express.json());

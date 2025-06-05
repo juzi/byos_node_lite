@@ -1,6 +1,6 @@
 import {Liquid} from 'liquidjs';
-import {TEMPLATE_FOLDER} from "../Config.js";
-import {TemplateDataType} from "../Data/PrepareData.js";
+import {TEMPLATE_FOLDER} from "Config.js";
+import {TemplateDataType} from "Data/PrepareData.js";
 
 const engine = new Liquid({
     root: TEMPLATE_FOLDER,

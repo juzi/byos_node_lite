@@ -1,7 +1,7 @@
-import {prepareData, TemplateDataType} from "../Data/PrepareData.js";
+import {prepareData, TemplateDataType} from "Data/PrepareData.js";
 import {PNGto1BIT} from "./PNGto1BIT.js";
-import {TEMPLATE_FOLDER} from "../Config.js";
-import App from "../Template/JSX/App.js";
+import {TEMPLATE_FOLDER} from "Config.js";
+import App from "Template/JSX/App.js";
 import {renderToImage} from "./RenderHTML.js";
 import {buildLiquid} from "./BuildLiquid.js";
 import {buildJSX} from "./BuildJSX.js";
