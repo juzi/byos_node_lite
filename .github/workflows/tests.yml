@@ -9,12 +9,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    container:
-      image: node:22
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - run: npm i
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm install --no-package-lock
       - run: npm run test
-      
