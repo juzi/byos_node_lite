@@ -1,4 +1,6 @@
 # Image server for TRMNL built with Node.js, JSX and HTML
+![Tests](https://github.com/usetrmnl/byos_node_lite/actions/workflows/tests.yml/badge.svg)
+
 
 You can create TRMNL screen just like website: collect data with JavaScript and design layout with JSX(React) or HTML
 with Liquid templates.
