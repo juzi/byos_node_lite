@@ -10,6 +10,8 @@ export default defineConfig({
         env: {
             'SECRET_KEY': 'TEST_SECRET_KEY',
             'PUBLIC_URL_ORIGIN': 'TEST_PUBLIC_URL_ORIGIN',
+            'BYOS_DEVICE_MAC': 'TEST_BYOS_DEVICE_MAC',
+            'BYOS_DEVICE_ACCESS_TOKEN': 'TEST_BYOS_DEVICE_ACCESS_TOKEN'
         }
     },
 })

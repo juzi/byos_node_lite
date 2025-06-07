@@ -2,6 +2,9 @@ import {proxyLog} from "./Proxy.js";
 import {BYOS_PROXY} from "Config.js";
 
 export async function logRoute(macId: string, accessToken: string, body: any) {
+    if (!body || !body['log'] || !body['log']['logs_array']) {
+        return;
+    }
     body['log']['logs_array'].map((record: any) => {
         let ts = record['creation_timestamp'];
         if (ts) {

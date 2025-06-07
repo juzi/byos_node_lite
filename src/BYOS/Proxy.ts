@@ -1,6 +1,7 @@
 import {SetupResponse} from "./Setup.js";
 import {DisplayResponse} from "./Display.js";
 import {IncomingHttpHeaders} from "http";
+import {IS_TEST_ENV} from "../Config.js";
 
 export async function proxySetup(macId: string): Promise<SetupResponse | null> {
     return requestCore('GET', '/api/setup', {id: macId});
@@ -27,6 +28,10 @@ async function requestCore(
     body?: {
         [key: string]: any
     }) {
+    if (IS_TEST_ENV) {
+        return false;
+    }
+
     const response = await fetch('https://usetrmnl.com' + path, {
         method,
         headers: {

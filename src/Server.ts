@@ -1,11 +1,11 @@
-import express, {Request, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import {
     SECRET_KEY,
     SERVER_HOST,
     SERVER_PORT,
     BYOS_ENABLED,
     REFRESH_RATE_SECONDS,
-    SCREEN_URL
+    SCREEN_URL, IS_TEST_ENV
 } from "Config.js";
 import {buildScreen, checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {BYOSRoutes} from "BYOS/BYOSRoutes.js";
@@ -57,19 +57,21 @@ app.use((req: Request, res: Response) => {
     res.status(404).json({error: 'Not Found', message: 'The requested path could not be found: ' + req.url});
 });
 
-app.use((err: Error, _: Request, res: Response) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err.stack);
     res.status(500).json({error: 'Internal Server Error', message: 'Something went wrong!'});
 });
 
-app.listen(SERVER_PORT, SERVER_HOST, (error) => {
-    if (error) {
-        throw error;
-    } else {
-        console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT + ROUTE_IMAGE}?secret_key=... OR ${SCREEN_URL}`);
-        checkImageUrl(SCREEN_URL);
-    }
-})
+if (!IS_TEST_ENV) {
+    app.listen(SERVER_PORT, SERVER_HOST, (error) => {
+        if (error) {
+            throw error;
+        } else {
+            console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT + ROUTE_IMAGE}?secret_key=... OR ${SCREEN_URL}`);
+            checkImageUrl(SCREEN_URL);
+        }
+    })
+}
 
 process.on('uncaughtException', (error: Error) => {
     console.error('Uncaught Exception:', error);

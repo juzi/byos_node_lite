@@ -10,7 +10,6 @@ export type SetupResponse = {
 }
 
 export async function setupRoute(macId: string): Promise<SetupResponse> {
-    console.log(`[SETUP] [${macId}] device is trying to connect.`);
     if (BYOS_PROXY) {
         const proxyResp = await proxySetup(macId);
         if (proxyResp) {
