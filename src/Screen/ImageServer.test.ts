@@ -6,7 +6,7 @@ import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
 import {SECRET_KEY} from "Config.js";
 
 test('checkImageUrl', async () => {
-    const result = await checkImageUrl('https://github.com/usetrmnl/byos_node_lite/blob/main/assets/images/wallpaper.jpeg?raw=true');
+    const result = await checkImageUrl('https://github.com/usetrmnl/byos_node_lite/blob/main/assets/images/color.jpg?raw=true');
     expect(result).toBeTruthy();
 })
 
