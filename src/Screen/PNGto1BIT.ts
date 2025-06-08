@@ -1,10 +1,17 @@
-import sharp from "sharp";
+import {Jimp} from "jimp";
+
 
 export async function PNGto1BIT(image: Buffer) {
-    const data = await sharp(image)
-        .grayscale()
-        .raw()
-        .toBuffer();
+    // Convert to grayscale
+    const jimpImage = await Jimp.read(image);
+    jimpImage.greyscale();
+    const bit4Data = new Uint8Array(jimpImage.bitmap.data);
+
+    // Convert to 1-bit
+    let data = new Uint8Array(jimpImage.bitmap.width * jimpImage.bitmap.height);
+    for (let i = 0; i < data.length; i++) {
+        data[i] = bit4Data[i * 4];
+    }
 
     // Fixed dimensions to match the device requirements
     const DISPLAY_BMP_IMAGE_SIZE = 48062;

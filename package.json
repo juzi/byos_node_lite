@@ -8,11 +8,11 @@
   "type": "module",
   "dependencies": {
     "express": "^5.1.0",
+    "jimp": "^1.6.0",
     "liquidjs": "^10.21.1",
     "puppeteer": "^24.9.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "sharp": "^0.34.1",
     "tsx": "^4.19.4"
   },
   "devDependencies": {

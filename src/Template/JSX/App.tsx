@@ -18,7 +18,7 @@ export default function App(data: TemplateDataType) {
             <HackerNews style={{width: '100%', height: '100%'}}/>
         </div>
         <div style={{width: '50%', overflow: 'hidden'}}>
-            <img style={{height: '100%', marginLeft: '-160px'}} src='/assets/images/wallpaper.jpeg'/>
+            <img style={{height: '80%', marginLeft: '-50px', marginTop: '10%'}} src='/assets/images/color.jpg'/>
         </div>
     </div>
 }
