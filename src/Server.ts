@@ -10,6 +10,7 @@ import {
 import {buildScreen, checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {BYOSRoutes} from "BYOS/BYOSRoutes.js";
 import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
+import {initPuppeteer} from "./Screen/RenderHTML.js";
 
 export const app = express();
 app.use(express.json());
@@ -63,10 +64,12 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 if (!IS_TEST_ENV) {
-    app.listen(SERVER_PORT, SERVER_HOST, (error) => {
+
+    app.listen(SERVER_PORT, SERVER_HOST, async (error) => {
         if (error) {
             throw error;
         } else {
+            await initPuppeteer();
             console.log(`Server started. Check it http://127.0.0.1:${SERVER_PORT + ROUTE_IMAGE}?secret_key=... OR ${SCREEN_URL}`);
             checkImageUrl(SCREEN_URL);
         }

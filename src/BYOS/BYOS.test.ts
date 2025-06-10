@@ -1,7 +1,12 @@
-import {expect, test} from "vitest";
+import {beforeAll, expect, test} from "vitest";
 import request from "supertest";
 import {app} from "Server.js";
 import {ROUTE_BYOS_DISPLAY, ROUTE_BYOS_LOG, ROUTE_BYOS_SETUP} from "../Routes.js";
+import {initPuppeteer} from "../Screen/RenderHTML.js";
+
+beforeAll(async () => {
+    await initPuppeteer();
+});
 
 test('ROUTE_BYOS_SETUP', async () => {
     const response = await request(app).get(ROUTE_BYOS_SETUP)

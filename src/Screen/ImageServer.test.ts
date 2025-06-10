@@ -1,9 +1,15 @@
-import {expect, test} from "vitest";
+import {expect, test, beforeAll} from "vitest";
 import {checkImageUrl} from "./Screen.js";
 import {app} from "Server.js";
 import request from 'supertest';
 import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
 import {SECRET_KEY} from "Config.js";
+import {initPuppeteer} from "./RenderHTML.js";
+
+beforeAll(async () => {
+    await initPuppeteer();
+});
+
 
 test('checkImageUrl', async () => {
     const result = await checkImageUrl('https://github.com/usetrmnl/byos_node_lite/blob/main/assets/images/color.jpg?raw=true');
