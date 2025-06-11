@@ -1,8 +1,8 @@
 {
   "name": "byos_node_lite",
   "scripts": {
-    "start": "tsx --env-file=.env.local src/Server.ts",
-    "watch": "tsx watch --env-file=.env.local src/Server.ts",
+    "start": "tsx --env-file=.env.local src/Main.ts",
+    "watch": "tsx watch --env-file=.env.local src/Main.ts",
     "test": "tsc && vitest run"
   },
   "type": "module",

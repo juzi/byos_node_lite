@@ -64,7 +64,6 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 if (!IS_TEST_ENV) {
-
     app.listen(SERVER_PORT, SERVER_HOST, async (error) => {
         if (error) {
             throw error;
@@ -75,21 +74,3 @@ if (!IS_TEST_ENV) {
         }
     })
 }
-
-process.on('uncaughtException', (error: Error) => {
-    console.error('Uncaught Exception:', error);
-});
-
-process.on('unhandledRejection', (reason: any) => {
-    console.error('Unhandled Rejection:', reason);
-});
-
-process.on('SIGINT', () => {
-    console.log('Received SIGINT, shutting down gracefully...');
-    process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-    console.log('Received SIGTERM, shutting down gracefully...');
-    process.exit(0);
-});
