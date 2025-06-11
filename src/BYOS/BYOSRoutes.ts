@@ -11,9 +11,14 @@ export const BYOSRoutes = Router();
 
 BYOSRoutes.use((req: Request, res: Response, next: NextFunction) => {
     const macId = getMacId(req);
-    if (!BYOS_ENABLED || !BYOS_DEVICE_MAC) {
+    if (!BYOS_ENABLED) {
         console.error(`[BYOS] [${macId}] device is trying to connect, but BYOS is disabled`);
         res.status(401).json('BYOS is disabled');
+        return;
+    }
+    if (BYOS_DEVICE_MAC === undefined) {
+        console.error(`[BYOS] [${macId}] BYOS_DEVICE_MAC is not set in config`);
+        res.status(401).json('BYOS is not fully set up');
         return;
     }
     if (macId !== BYOS_DEVICE_MAC) {

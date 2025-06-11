@@ -34,6 +34,10 @@ export async function displayRoute(macId: string, headers: IncomingHttpHeaders):
         }
     }
     displayFromProxy = false;
+    if (BYOS_DEVICE_ACCESS_TOKEN === undefined) {
+        console.error(`[DISPLAY] [${macId}] BYOS_DEVICE_ACCESS_TOKEN is not set in config`);
+        throw new Error('BYOS is not fully enabled');
+    }
     if (accessToken !== BYOS_DEVICE_ACCESS_TOKEN) {
         console.error(`[DISPLAY] [${macId}] Wrong access-token value from device: ${accessToken}`);
         throw new Error('Wrong access-token value from device');

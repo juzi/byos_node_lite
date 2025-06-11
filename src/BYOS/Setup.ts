@@ -18,10 +18,14 @@ export async function setupRoute(macId: string): Promise<SetupResponse> {
             return proxyResp;
         }
     }
+    if (BYOS_DEVICE_ACCESS_TOKEN === undefined) {
+        console.error(`[BYOS] [${macId}] BYOS_DEVICE_ACCESS_TOKEN is not set in config`);
+        throw new Error('BYOS is not fully enabled');
+    }
     return {
         "status": 200,
         "image_url": '',
-        "api_key": BYOS_DEVICE_ACCESS_TOKEN ?? '',
+        "api_key": BYOS_DEVICE_ACCESS_TOKEN,
         "friendly_id": "TRMNL",
         "message": "Device successfully registered",
     };
