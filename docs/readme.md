@@ -28,7 +28,7 @@ own [BYOS](#bring-your-own-server-byos).
 ## Quick Start
 
 1. Press button `Use this template` on Github, or clone this repository
-2. Copy .env.local to .env.example and change values to yours
+2. Copy .env.example to .env.local and change values to yours
 3. (optional) setup local Node.js and NPM, for example via [nvm](https://github.com/nvm-sh/nvm)
 4. Run `npm run watch`
 5. See preview of the screen in browser http://127.0.0.1:3000/image?secret_key=...
