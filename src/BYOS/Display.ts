@@ -3,7 +3,8 @@ import {
     BUTTON_2_CLICK_FUNCTION,
     BYOS_DEVICE_ACCESS_TOKEN,
     BYOS_PROXY,
-    REFRESH_RATE_SECONDS, SCREEN_URL,
+    REFRESH_RATE_SECONDS,
+    SCREEN_URL,
 } from "Config.js";
 import {proxyDisplay} from "./Proxy.js";
 import {checkImageUrl, getScreenHash} from "Screen/Screen.js";
@@ -25,6 +26,7 @@ let displayFromProxy = true; // one by one
 
 export async function displayRoute(macId: string, headers: IncomingHttpHeaders): Promise<DisplayResponse> {
     const accessToken = readAccessToken(headers);
+    console.log("Access Token", accessToken);
     updateBattery(Number(headers['battery-voltage']));
     if (BYOS_PROXY && !displayFromProxy) {
         displayFromProxy = true;

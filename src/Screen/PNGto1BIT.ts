@@ -1,6 +1,3 @@
-import {Jimp} from "jimp";
-
-
 export async function PNGto1BIT(image: Buffer) {
     // Convert to grayscale
     const jimpImage = await Jimp.read(image);
@@ -122,21 +119,20 @@ export async function PNGto1BIT(image: Buffer) {
                 // Determine pixel value with optimized logic
                 let isBlack = false;
 
-                if (gray < 10) {
+                if (gray >= 128) {
                     // Pure black pixel
                     isBlack = true;
-                } else if (gray > 240) {
+                } else if (gray < 128) {
                     // Pure white pixel
                     isBlack = false;
-                } else if (isEdge[idx]) {
-                    // On an edge (likely text) - round to black for better contrast
-                    isBlack = gray < 128;
+                    // } else if (isEdge[idx]) {
+                    //     // On an edge (likely text) - round to black for better contrast
+                    //     isBlack = gray < 128;
                 } else {
                     // Not on an edge (likely in an image) - use dithered result
                     const ditheredValue = dithered[idx];
                     isBlack = ditheredValue < 128; // Values are either 0 or 255
                 }
-
                 // Set the bit in the byte if black using bit operations
                 if (isBlack) {
                     byte |= 1 << (7 - bit);
@@ -149,6 +145,9 @@ export async function PNGto1BIT(image: Buffer) {
     }
     return buffer;
 }
+
+
+import {Jimp} from "jimp";
 
 
 const atkinsonDithering = (
@@ -175,12 +174,12 @@ const atkinsonDithering = (
             result[index] = inverted ? 255 - newPixel : newPixel;
             const error = Math.floor((oldPixel - newPixel) / 8);
 
-            if (x + 1 < width) buffer[index + 1] += error;
-            if (x + 2 < width) buffer[index + 2] += error;
-            if (y + 1 < height && x - 1 >= 0) buffer[index + width - 1] += error;
-            if (y + 1 < height) buffer[index + width] += error;
-            if (y + 1 < height && x + 1 < width) buffer[index + width + 1] += error;
-            if (y + 2 < height) buffer[index + width * 2] += error;
+            // if (x + 1 < width) buffer[index + 1] += error;
+            // if (x + 2 < width) buffer[index + 2] += error;
+            // if (y + 1 < height && x - 1 >= 0) buffer[index + width - 1] += error;
+            // if (y + 1 < height) buffer[index + width] += error;
+            // if (y + 1 < height && x + 1 < width) buffer[index + width + 1] += error;
+            // if (y + 2 < height) buffer[index + width * 2] += error;
         }
     }
 

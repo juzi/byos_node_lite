@@ -1,4 +1,5 @@
 import puppeteer, {Page} from "puppeteer";
+import sharp from 'sharp';
 import fs from 'fs/promises';
 import {ASSETS_FOLDER, IS_TEST_ENV} from "Config.js";
 
@@ -52,7 +53,21 @@ export async function initPuppeteer() {
 
 
 export async function renderToImage(html: string) {
+    await page.addStyleTag({
+        content: `
+    * {
+      filter: grayscale(100%) contrast(1000%) brightness(100%);
+      -webkit-filter: grayscale(100%) contrast(1000%) brightness(100%);
+    }
+    `
+    });
     await page.setContent(html, {waitUntil: "load"});
     const image: Uint8Array = await page.screenshot();
-    return Buffer.from(image);
+    const buffer = await sharp(image)
+        .threshold(0) // Adjust threshold value (0-255) as needed
+        .toColorspace('b-w')
+        .toBuffer();
+    console.log(buffer.length);
+    return buffer;
+    //return Buffer.from(image);
 }

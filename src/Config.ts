@@ -2,13 +2,13 @@ import * as path from "node:path";
 import {ROUTE_IMAGE} from "./Routes.js";
 import * as process from "node:process";
 
-export const SERVER_PORT = 3000;
-export const SERVER_HOST = '0.0.0.0';
+export const SERVER_PORT = 2300;
+export const SERVER_HOST = '192.168.0.23';
 export const REFRESH_RATE_SECONDS = 60;
-export const TIMEZONE = 'Europe/Warsaw';
+export const TIMEZONE = 'Europe/Vienna';
 export const ALLOW_FIRMWARE_UPDATE = true;
 export const BUTTON_2_CLICK_FUNCTION = 'sleep'; // https://help.usetrmnl.com/en/articles/9672080-special-functions
-export let BYOS_ENABLED = false;
+export let BYOS_ENABLED = true;
 export let BYOS_PROXY = false;
 
 // ----- Calculated constants below
