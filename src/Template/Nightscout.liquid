@@ -1,0 +1,72 @@
+<style>
+  div.display {
+    display: 'flex',
+    backgroundColor: '#fff',
+    font-color: '#000',
+    font-family: "Trebuchet MS", sans-serif;
+    width: '800px',
+    height: '480px',
+  }
+  div.sugaranddelta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    width: 100%;
+  }
+
+  div.sugar {
+    font-size: 200px;
+    font-weight: bold;
+    padding-left: 80px;
+  }
+
+  div.delta {
+    font-size: 100px;
+    padding-top: 70px;
+    padding-left: 60px;
+  }
+
+  div.arrowandtime {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    font-weight: bold;
+    margin-top: 30px;
+  }
+
+  div.arrow {
+    font-size: 150px;
+    font-weight: bolder;
+    padding-left: 100px;
+  }
+
+  div.age {
+    font-size: 75px;
+    padding-top: 35px;
+    padding-left: 0px;
+  }  
+</style>
+<div class="screen">
+    <div class="view view--full">
+<div class="display">
+  <div class="sugaranddelta">
+    <div class="grid-child sugar">
+      <text>100</text>
+      <br></div>
+    <div class="grid-child delta">
+      <text>-3</text>
+    </div>
+  </div>
+  <div class="arrowandtime">
+    <div class="arrow">
+      <text>➝</text>
+    </div>
+    <div class="age">
+      <text>3m ago</text>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+</body>
