@@ -1,5 +1,4 @@
 import puppeteer, {Page} from "puppeteer";
-import sharp from 'sharp';
 import fs from 'fs/promises';
 import {ASSETS_FOLDER, IS_TEST_ENV} from "Config.js";
 
@@ -61,13 +60,13 @@ export async function renderToImage(html: string) {
     }
     `
     });
-    await page.setContent(html, {waitUntil: "load"});
+    await page.setContent(html, {waitUntil: "domcontentloaded"});
     const image: Uint8Array = await page.screenshot();
-    const buffer = await sharp(image)
-        .threshold(0) // Adjust threshold value (0-255) as needed
-        .toColorspace('b-w')
-        .toBuffer();
-    console.log(buffer.length);
-    return buffer;
-    //return Buffer.from(image);
+    // const buffer = await sharp(image)
+    //     .threshold(0) // Adjust threshold value (0-255) as needed
+    //     .toColorspace('b-w')
+    //     .toBuffer();
+
+    //return buffer;
+    return Buffer.from(image);
 }

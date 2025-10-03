@@ -1,72 +1,356 @@
 <style>
-  div.display {
-    display: 'flex',
-    backgroundColor: '#fff',
-    font-color: '#000',
-    font-family: "Trebuchet MS", sans-serif;
-    width: '800px',
-    height: '480px',
-  }
-  div.sugaranddelta {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
-    width: 100%;
-  }
+    div.display {
+        /*display: flex;*/
+        backgroundColor: '#fff';
+        font-color: '#000';
+        font-family: "LiberationSans", sans-serif;
+    }
 
-  div.sugar {
-    font-size: 200px;
-    font-weight: bold;
-    padding-left: 80px;
-  }
+    div.sugaranddelta {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-gap: 20px;
+        width: 100%;
+        padding-right: 20px;
+    }
 
-  div.delta {
-    font-size: 100px;
-    padding-top: 70px;
-    padding-left: 60px;
-  }
+    div.sugar {
+        font-size: 200px;
+        font-weight: bold;
+        padding-left: 40px;
+    }
 
-  div.arrowandtime {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
-    font-weight: bold;
-    margin-top: 30px;
-  }
+    div.sign {
+        font-size: 100px;
+        padding-left: 40px;
+        padding-top: 60px;
+    }
 
-  div.arrow {
-    font-size: 150px;
-    font-weight: bolder;
-    padding-left: 100px;
-  }
+    div.delta {
+        font-size: 100px;
+        padding-top: 70px;
+        padding-right: 55px;
+    }
 
-  div.age {
-    font-size: 75px;
-    padding-top: 35px;
-    padding-left: 0px;
-  }  
+    div.arrow {
+        font-size: 150px;
+        font-weight: bolder;
+        padding-top: 40px;
+    }
+
+
+    div.timeandgraph {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
+        width: 100%;
+        padding-left: 30px;
+        font-weight: bold;
+    }
+
+
+    div.age {
+        font-size: 70px;
+        padding-top: 25px;
+        padding-left: 30px;
+    }
+
+    div.graph {
+        width: 400px;
+        height: 400px;
+        padding-right: 10px;
+    }
+
+    /*canvas {*/
+    /*    max-height: 200px;*/
+    /*}*/
 </style>
 <div class="screen">
     <div class="view view--full">
-<div class="display">
-  <div class="sugaranddelta">
-    <div class="grid-child sugar">
-      <text>100</text>
-      <br></div>
-    <div class="grid-child delta">
-      <text>-3</text>
+        <div class="display">
+            <div class="sugaranddelta">
+                <div class="grid-child sugar">
+                    <text>100</text>
+                </div>
+                <div class="grid-child sign">
+                    <text>-</text>
+                </div>
+                <div class="grid-child delta">
+                    <text>3</text>
+                </div>
+                <div class="grid-child arrow">
+                    <text>➝</text>
+                </div>
+            </div>
+            <div class="timeandgraph">
+                <div class="grid-child age">
+                    <text>3m ago</text>
+                </div>
+                <div class="grid-child graph">
+                    <canvas id="glucoseChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="arrowandtime">
-    <div class="arrow">
-      <text>➝</text>
-    </div>
-    <div class="age">
-      <text>3m ago</text>
-    </div>
-  </div>
+</div>
 
-</div>
-</div>
-</div>
+<script>
+    // Your JSON data
+
+
+    function parseGlucoseData(data) {
+        // Sort by date (oldest first) and extract values
+        const sorted = data.result
+            .filter(r => r.isValid)
+            .sort((a, b) => a.date - b.date);
+        const labels = sorted.map(r => {
+            const d = new Date(r.date);
+            return d.toLocaleTimeString('de-AT', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        });
+
+        const values = sorted.map(r => r.sgv);
+
+        return {labels, values};
+    }
+
+    function createChart(labels, values) {
+        const ctx = document.getElementById('glucoseChart').getContext('2d');
+
+        Chart.defaults.font.size = 24;
+        Chart.defaults.font.weight = 'bold';
+
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    borderColor: '#000',
+                    backgroundColor: 'rgba(255, 255, 255, 1.0)',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: false,
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                animation: {
+                    duration: 0
+                },
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: Math.floor(Math.min(...values) / 10) * 10,
+                        max: Math.ceil(Math.max(...values) / 10) * 10
+                    },
+                    x: {
+                        // ticks: {
+                        //     font: {
+                        //         size: 18
+                        //     }
+                        // },
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    function drawGraph() {
+        const jsonData = {
+            "status": 200,
+            "result": [{
+                "device": "G7",
+                "date": 1759485707431,
+                "dateString": "2025-10-03T10:01:47.431Z",
+                "isValid": true,
+                "sgv": 122,
+                "direction": "DoubleDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T10:01:52.151Z",
+                "identifier": "68df9f10fcb2f1024b912681",
+                "srvModified": 1759485707431,
+                "srvCreated": 1759485707431
+            }, {
+                "device": "G7",
+                "date": 1759485406680,
+                "dateString": "2025-10-03T09:56:46.680Z",
+                "isValid": true,
+                "sgv": 145,
+                "direction": "FortyFiveDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:56:52.561Z",
+                "identifier": "68df9de4fcb2f1024b91267d",
+                "srvModified": 1759485406680,
+                "srvCreated": 1759485406680
+            }, {
+                "device": "G7",
+                "date": 1759485106536,
+                "dateString": "2025-10-03T09:51:46.536Z",
+                "isValid": true,
+                "sgv": 182,
+                "direction": "FortyFiveUp",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:51:52.391Z",
+                "identifier": "68df9cb8fcb2f1024b91267b",
+                "srvModified": 1759485106536,
+                "srvCreated": 1759485106536
+            }, {
+                "device": "G7",
+                "date": 1759484806565,
+                "dateString": "2025-10-03T09:46:46.565Z",
+                "isValid": true,
+                "sgv": 200,
+                "direction": "SingleUp",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:46:53.232Z",
+                "identifier": "68df9b8dfcb2f1024b912677",
+                "srvModified": 1759484806565,
+                "srvCreated": 1759484806565
+            }, {
+                "device": "G7",
+                "date": 1759484506873,
+                "dateString": "2025-10-03T09:41:46.873Z",
+                "isValid": true,
+                "sgv": 240,
+                "direction": "DoubleUp",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:41:52.627Z",
+                "identifier": "68df9a60fcb2f1024b912674",
+                "srvModified": 1759484506873,
+                "srvCreated": 1759484506873
+            }, {
+                "device": "G7",
+                "date": 1759484206620,
+                "dateString": "2025-10-03T09:36:46.620Z",
+                "isValid": true,
+                "sgv": 220,
+                "direction": "DoubleUp",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:36:52.558Z",
+                "identifier": "68df9934fcb2f1024b912672",
+                "srvModified": 1759484206620,
+                "srvCreated": 1759484206620
+            }, {
+                "device": "G7",
+                "date": 1759483907374,
+                "dateString": "2025-10-03T09:31:47.374Z",
+                "isValid": true,
+                "sgv": 150,
+                "direction": "DoubleUp",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:31:52.303Z",
+                "identifier": "68df9808fcb2f1024b912670",
+                "srvModified": 1759483907374,
+                "srvCreated": 1759483907374
+            }, {
+                "device": "G7",
+                "date": 1759483606858,
+                "dateString": "2025-10-03T09:26:46.858Z",
+                "isValid": true,
+                "sgv": 85,
+                "direction": "FortyFiveDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:26:52.607Z",
+                "identifier": "68df96dcfcb2f1024b91266e",
+                "srvModified": 1759483606858,
+                "srvCreated": 1759483606858
+            }, {
+                "device": "G7",
+                "date": 1759483307389,
+                "dateString": "2025-10-03T09:21:47.389Z",
+                "isValid": true,
+                "sgv": 53,
+                "direction": "FortyFiveDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:21:52.142Z",
+                "identifier": "68df95b0fcb2f1024b91266b",
+                "srvModified": 1759483307389,
+                "srvCreated": 1759483307389
+            }, {
+                "device": "G7",
+                "date": 1759483007338,
+                "dateString": "2025-10-03T09:16:47.338Z",
+                "isValid": true,
+                "sgv": 61,
+                "direction": "Flat",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:16:52.038Z",
+                "identifier": "68df9484fcb2f1024b912668",
+                "srvModified": 1759483007338,
+                "srvCreated": 1759483007338
+            }, {
+                "device": "G7",
+                "date": 1759482707400,
+                "dateString": "2025-10-03T09:11:47.400Z",
+                "isValid": true,
+                "sgv": 64,
+                "direction": "FortyFiveDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:11:52.343Z",
+                "identifier": "68df9358fcb2f1024b912666",
+                "srvModified": 1759482707400,
+                "srvCreated": 1759482707400
+            }, {
+                "device": "G7",
+                "date": 1759482407368,
+                "dateString": "2025-10-03T09:06:47.368Z",
+                "isValid": true,
+                "sgv": 73,
+                "direction": "DoubleDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:06:52.301Z",
+                "identifier": "68df922cfcb2f1024b912664",
+                "srvModified": 1759482407368,
+                "srvCreated": 1759482407368
+            }, {
+                "device": "G7",
+                "date": 1759482106546,
+                "dateString": "2025-10-03T09:01:46.546Z",
+                "isValid": true,
+                "sgv": 95,
+                "direction": "DoubleDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T09:01:52.329Z",
+                "identifier": "68df9100fcb2f1024b912662",
+                "srvModified": 1759482106546,
+                "srvCreated": 1759482106546
+            }, {
+                "device": "G7",
+                "date": 1759481806539,
+                "dateString": "2025-10-03T08:56:46.539Z",
+                "isValid": true,
+                "sgv": 117,
+                "direction": "SingleDown",
+                "type": "sgv",
+                "created_at": "2025-10-03T08:56:52.381Z",
+                "identifier": "68df8fd4fcb2f1024b912660",
+                "srvModified": 1759481806539,
+                "srvCreated": 1759481806539
+            }]
+        };
+
+        // Initialize the chart
+        const {labels, values} = parseGlucoseData(jsonData);
+
+        createChart(labels, values);
+    }
+
+    drawGraph();
+</script>
 </body>
+</html>

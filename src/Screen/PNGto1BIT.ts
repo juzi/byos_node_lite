@@ -28,34 +28,34 @@ export async function PNGto1BIT(image: Buffer) {
         }
     }
 
-    // Step 3: Edge detection
-    for (let y = 0; y < targetHeight; y++) {
-        const yOffset = y * targetWidth;
-
-        for (let x = 0; x < targetWidth; x++) {
-            const idx = yOffset + x;
-            const gray = grayscale[idx];
-
-            // Edge detection for pixels not on the border
-            if (y > 0 && y < targetHeight - 1 && x > 0 && x < targetWidth - 1) {
-                // Check if this pixel has high contrast with neighbors
-                const fuzziness = 20;
-                const hasExtreme =
-                    gray < fuzziness ||
-                    gray > 255 - fuzziness ||
-                    grayscale[idx - 1] < fuzziness ||
-                    grayscale[idx - 1] > 255 - fuzziness ||
-                    grayscale[idx + 1] < fuzziness ||
-                    grayscale[idx + 1] > 255 - fuzziness ||
-                    grayscale[idx - targetWidth] < fuzziness ||
-                    grayscale[idx - targetWidth] > 255 - fuzziness ||
-                    grayscale[idx + targetWidth] < fuzziness ||
-                    grayscale[idx + targetWidth] > 255 - fuzziness;
-
-                isEdge[idx] = hasExtreme ? 1 : 0;
-            }
-        }
-    }
+    // // Step 3: Edge detection
+    // for (let y = 0; y < targetHeight; y++) {
+    //     const yOffset = y * targetWidth;
+    //
+    //     for (let x = 0; x < targetWidth; x++) {
+    //         const idx = yOffset + x;
+    //         const gray = grayscale[idx];
+    //
+    //         // Edge detection for pixels not on the border
+    //         if (y > 0 && y < targetHeight - 1 && x > 0 && x < targetWidth - 1) {
+    //             // Check if this pixel has high contrast with neighbors
+    //             const fuzziness = 20;
+    //             const hasExtreme =
+    //                 gray < fuzziness ||
+    //                 gray > 255 - fuzziness ||
+    //                 grayscale[idx - 1] < fuzziness ||
+    //                 grayscale[idx - 1] > 255 - fuzziness ||
+    //                 grayscale[idx + 1] < fuzziness ||
+    //                 grayscale[idx + 1] > 255 - fuzziness ||
+    //                 grayscale[idx - targetWidth] < fuzziness ||
+    //                 grayscale[idx - targetWidth] > 255 - fuzziness ||
+    //                 grayscale[idx + targetWidth] < fuzziness ||
+    //                 grayscale[idx + targetWidth] > 255 - fuzziness;
+    //
+    //             isEdge[idx] = hasExtreme ? 1 : 0;
+    //         }
+    //     }
+    // }
 
     // Step 4: Apply dithering method
     const dithered = atkinsonDithering(grayscale, targetWidth, targetHeight, false);
@@ -174,12 +174,12 @@ const atkinsonDithering = (
             result[index] = inverted ? 255 - newPixel : newPixel;
             const error = Math.floor((oldPixel - newPixel) / 8);
 
-            // if (x + 1 < width) buffer[index + 1] += error;
-            // if (x + 2 < width) buffer[index + 2] += error;
-            // if (y + 1 < height && x - 1 >= 0) buffer[index + width - 1] += error;
-            // if (y + 1 < height) buffer[index + width] += error;
-            // if (y + 1 < height && x + 1 < width) buffer[index + width + 1] += error;
-            // if (y + 2 < height) buffer[index + width * 2] += error;
+            if (x + 1 < width) buffer[index + 1] += error;
+            if (x + 2 < width) buffer[index + 2] += error;
+            if (y + 1 < height && x - 1 >= 0) buffer[index + width - 1] += error;
+            if (y + 1 < height) buffer[index + width] += error;
+            if (y + 1 < height && x + 1 < width) buffer[index + width + 1] += error;
+            if (y + 2 < height) buffer[index + width * 2] += error;
         }
     }
 
