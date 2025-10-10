@@ -1,6 +1,6 @@
 import {Liquid} from 'liquidjs';
 import {TEMPLATE_FOLDER} from "Config.js";
-import {TemplateDataType} from "Data/PrepareData.js";
+import {NightscoutData} from "../Data/NightscoutData.js";
 
 const engine = new Liquid({
     root: TEMPLATE_FOLDER,
@@ -11,7 +11,9 @@ const engine = new Liquid({
     strictVariables: true,
 });
 
-export async function buildLiquid(templateFile: string, data: TemplateDataType) {
+export async function buildLiquid(templateFile: string, data: NightscoutData): Promise<void> {
+    console.log('data:')
+    console.log(data);
     return engine.renderFile(templateFile, data);
 }
 

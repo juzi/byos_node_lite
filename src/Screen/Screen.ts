@@ -1,17 +1,18 @@
-import {prepareData, TemplateDataType} from "Data/PrepareData.js";
+import {prepareData} from "Data/PrepareData.js";
 import {TEMPLATE_FOLDER} from "Config.js";
 import {renderToImage} from "./RenderHTML.js";
 import {buildLiquid} from "./BuildLiquid.js";
 import crypto from "crypto";
 import {readFileSync} from "node:fs";
 import {PNGto1BIT} from "./PNGto1BIT.js";
+import {NightscoutData} from "../Data/NightscoutData.js";
 
 const headerHtml = readFileSync(TEMPLATE_FOLDER + '/Header.html', 'utf8');
 
 const screens = [
     // you can leave one or add more
 //    (data: TemplateDataType) => buildJSX(App, data),
-    (data: TemplateDataType) => buildLiquid('Nightscout', data),
+    (data: NightscoutData) => buildLiquid('Nightscout', data),
 ];
 
 export async function buildScreen() {

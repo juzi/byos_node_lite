@@ -1,7 +1,9 @@
 # Image server for TRMNL built with Node.js, JSX and HTML
+
 ![Tests](https://github.com/usetrmnl/byos_node_lite/actions/workflows/tests.yml/badge.svg)
 
-Create custom screen on your e-ink TRMNL device just like website: collect data with JavaScript and design layout with JSX(React) or HTML
+Create custom screen on your e-ink TRMNL device just like website: collect data with JavaScript and design layout with
+JSX(React) or HTML
 with Liquid templates.
 
 This repository is starter for Node.js server, that generates an image that you can use
@@ -120,7 +122,7 @@ Example:
 
 It's easier to collect all variables and data in one place, before using it in templates.<br>
 You can collect it in any methods or files and assemble results in in [PrepareData.ts](../src/Data/PrepareData.ts).<br>
-Example: [getting HackerNews posts](../src/Data/HackerNewsData.ts).
+Example: [getting HackerNews posts](../src/Data/NightscoutData.ts).
 
 ## Your Server
 
