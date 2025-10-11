@@ -11,6 +11,8 @@ import {checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {updateBattery} from "./Battery.js";
 import {IncomingHttpHeaders} from "http";
 
+export const refreshRate = {seconds: REFRESH_RATE_SECONDS};
+
 export type DisplayResponse = {
     status: number,
     image_url: string | null, // in case of refresh firmware response
@@ -44,11 +46,12 @@ export async function displayRoute(macId: string, headers: IncomingHttpHeaders):
         console.error(`[DISPLAY] [${macId}] Wrong access-token value from device: ${accessToken}`);
         throw new Error('Wrong access-token value from device');
     }
+    console.log('display route refresh: ' + refreshRate.seconds + 's');
     return {
         status: 0,
         filename: 'custom-screen-' + await getScreenHash(), // screen wouldn't update if data is not changed
         image_url: SCREEN_URL,
-        refresh_rate: REFRESH_RATE_SECONDS,
+        refresh_rate: refreshRate.seconds,
         reset_firmware: false,
         update_firmware: false,
         firmware_url: '',

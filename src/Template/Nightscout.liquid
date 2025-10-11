@@ -8,34 +8,38 @@
 
     div.sugaranddelta {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 0.7fr 1fr 1fr;
         grid-gap: 20px;
         width: 100%;
-        padding-right: 20px;
+        padding-right: 50px;
     }
 
     div.sugar {
-        font-size: 200px;
+        font-size: 210px;
         font-weight: bold;
+        width: 400px;
+        text-align: center;
         padding-left: 40px;
     }
 
     div.sign {
-        font-size: 100px;
+        font-size: 90px;
         padding-left: 40px;
-        padding-top: 60px;
+        padding-top: 70px;
+        padding-right: 0px;
+        margin-right: 0px;
     }
 
     div.delta {
-        font-size: 100px;
+        font-size: 90px;
         padding-top: 70px;
         padding-right: 55px;
     }
 
     div.arrow {
-        font-size: 150px;
-        font-weight: bolder;
-        padding-top: 40px;
+        font-size: 120px;
+        font-weight: bold;
+        padding-top: 50px;
     }
 
 
@@ -50,7 +54,7 @@
 
 
     div.age {
-        font-size: 70px;
+        font-size: 100px;
         padding-top: 25px;
         padding-left: 30px;
     }
@@ -73,18 +77,18 @@
                     <text>{{ sugar }}</text>
                 </div>
                 <div class="grid-child sign">
-                    <text></text>
+                    <text>{{ sign }}</text>
                 </div>
                 <div class="grid-child delta">
-                    <text></text>
+                    <text>{{ delta }}</text>
                 </div>
                 <div class="grid-child arrow">
-                    <text></text>
+                    <text>{{ arrow }}</text>
                 </div>
             </div>
             <div class="timeandgraph">
                 <div class="grid-child age">
-                    <text>m ago</text>
+                    <text>{{ age }} min</text>
                 </div>
                 <div class="grid-child graph">
                     <canvas id="glucoseChart"></canvas>
@@ -155,14 +159,9 @@
                     y: {
                         beginAtZero: false,
                         min: Math.floor(Math.min(...values) / 10) * 10,
-                        max: Math.ceil(Math.max(...values) / 10) * 10
+                        max: Math.ceil(Math.max(...values) / 10) * 10,
                     },
                     x: {
-                        // ticks: {
-                        //     font: {
-                        //         size: 18
-                        //     }
-                        // },
                         display: false
                     }
                 }
@@ -171,178 +170,7 @@
     }
 
     function drawGraph() {
-        const jsonData = {
-            "status": 200,
-            "result": [{
-                "device": "G7",
-                "date": 1759485707431,
-                "dateString": "2025-10-03T10:01:47.431Z",
-                "isValid": true,
-                "sgv": 122,
-                "direction": "DoubleDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T10:01:52.151Z",
-                "identifier": "68df9f10fcb2f1024b912681",
-                "srvModified": 1759485707431,
-                "srvCreated": 1759485707431
-            }, {
-                "device": "G7",
-                "date": 1759485406680,
-                "dateString": "2025-10-03T09:56:46.680Z",
-                "isValid": true,
-                "sgv": 145,
-                "direction": "FortyFiveDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:56:52.561Z",
-                "identifier": "68df9de4fcb2f1024b91267d",
-                "srvModified": 1759485406680,
-                "srvCreated": 1759485406680
-            }, {
-                "device": "G7",
-                "date": 1759485106536,
-                "dateString": "2025-10-03T09:51:46.536Z",
-                "isValid": true,
-                "sgv": 182,
-                "direction": "FortyFiveUp",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:51:52.391Z",
-                "identifier": "68df9cb8fcb2f1024b91267b",
-                "srvModified": 1759485106536,
-                "srvCreated": 1759485106536
-            }, {
-                "device": "G7",
-                "date": 1759484806565,
-                "dateString": "2025-10-03T09:46:46.565Z",
-                "isValid": true,
-                "sgv": 200,
-                "direction": "SingleUp",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:46:53.232Z",
-                "identifier": "68df9b8dfcb2f1024b912677",
-                "srvModified": 1759484806565,
-                "srvCreated": 1759484806565
-            }, {
-                "device": "G7",
-                "date": 1759484506873,
-                "dateString": "2025-10-03T09:41:46.873Z",
-                "isValid": true,
-                "sgv": 240,
-                "direction": "DoubleUp",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:41:52.627Z",
-                "identifier": "68df9a60fcb2f1024b912674",
-                "srvModified": 1759484506873,
-                "srvCreated": 1759484506873
-            }, {
-                "device": "G7",
-                "date": 1759484206620,
-                "dateString": "2025-10-03T09:36:46.620Z",
-                "isValid": true,
-                "sgv": 220,
-                "direction": "DoubleUp",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:36:52.558Z",
-                "identifier": "68df9934fcb2f1024b912672",
-                "srvModified": 1759484206620,
-                "srvCreated": 1759484206620
-            }, {
-                "device": "G7",
-                "date": 1759483907374,
-                "dateString": "2025-10-03T09:31:47.374Z",
-                "isValid": true,
-                "sgv": 150,
-                "direction": "DoubleUp",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:31:52.303Z",
-                "identifier": "68df9808fcb2f1024b912670",
-                "srvModified": 1759483907374,
-                "srvCreated": 1759483907374
-            }, {
-                "device": "G7",
-                "date": 1759483606858,
-                "dateString": "2025-10-03T09:26:46.858Z",
-                "isValid": true,
-                "sgv": 85,
-                "direction": "FortyFiveDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:26:52.607Z",
-                "identifier": "68df96dcfcb2f1024b91266e",
-                "srvModified": 1759483606858,
-                "srvCreated": 1759483606858
-            }, {
-                "device": "G7",
-                "date": 1759483307389,
-                "dateString": "2025-10-03T09:21:47.389Z",
-                "isValid": true,
-                "sgv": 53,
-                "direction": "FortyFiveDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:21:52.142Z",
-                "identifier": "68df95b0fcb2f1024b91266b",
-                "srvModified": 1759483307389,
-                "srvCreated": 1759483307389
-            }, {
-                "device": "G7",
-                "date": 1759483007338,
-                "dateString": "2025-10-03T09:16:47.338Z",
-                "isValid": true,
-                "sgv": 61,
-                "direction": "Flat",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:16:52.038Z",
-                "identifier": "68df9484fcb2f1024b912668",
-                "srvModified": 1759483007338,
-                "srvCreated": 1759483007338
-            }, {
-                "device": "G7",
-                "date": 1759482707400,
-                "dateString": "2025-10-03T09:11:47.400Z",
-                "isValid": true,
-                "sgv": 64,
-                "direction": "FortyFiveDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:11:52.343Z",
-                "identifier": "68df9358fcb2f1024b912666",
-                "srvModified": 1759482707400,
-                "srvCreated": 1759482707400
-            }, {
-                "device": "G7",
-                "date": 1759482407368,
-                "dateString": "2025-10-03T09:06:47.368Z",
-                "isValid": true,
-                "sgv": 73,
-                "direction": "DoubleDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:06:52.301Z",
-                "identifier": "68df922cfcb2f1024b912664",
-                "srvModified": 1759482407368,
-                "srvCreated": 1759482407368
-            }, {
-                "device": "G7",
-                "date": 1759482106546,
-                "dateString": "2025-10-03T09:01:46.546Z",
-                "isValid": true,
-                "sgv": 95,
-                "direction": "DoubleDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T09:01:52.329Z",
-                "identifier": "68df9100fcb2f1024b912662",
-                "srvModified": 1759482106546,
-                "srvCreated": 1759482106546
-            }, {
-                "device": "G7",
-                "date": 1759481806539,
-                "dateString": "2025-10-03T08:56:46.539Z",
-                "isValid": true,
-                "sgv": 117,
-                "direction": "SingleDown",
-                "type": "sgv",
-                "created_at": "2025-10-03T08:56:52.381Z",
-                "identifier": "68df8fd4fcb2f1024b912660",
-                "srvModified": 1759481806539,
-                "srvCreated": 1759481806539
-            }]
-        };
+        const jsonData = {{ rawEntries }};
 
         // Initialize the chart
         const {labels, values} = parseGlucoseData(jsonData);

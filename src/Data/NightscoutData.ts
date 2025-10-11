@@ -1,9 +1,11 @@
 import https from 'https';
 import smoothen from "./smoothing.js";
+import {refreshRate} from "../BYOS/Display.js";
 
 const NIGHTSCOUT_HOST = 'nightscout.zimmercarral.net';
 
 const REFRESH_SECONDS = 60;
+const PLUS_MINUS = '\u00b1'; // Plus-Minus sign
 const ARROW_FLAT = '\u279d';
 const ARROW_FORTYFIVE_UP = '\u2197';
 const ARROW_FORTYFIVE_DOWN = '\u2198';
@@ -15,11 +17,12 @@ const ARROW_NONE = '??';
 
 export type NightscoutData = {
     error: string;
-    refresh: number;
     sugar: number,
     arrow: string,
     age: number,
-    delta: string
+    sign: string,
+    delta: number,
+    rawEntries: string
 }
 
 export type NightscoutToken = {
@@ -64,39 +67,19 @@ export async function getNightscoutData(): Promise<NightscoutData> {
                             resolve(result);
                         } catch (error: any) {
                             console.error(error.message);
-                            resolve({
-                                error: error.message,
-                                refresh: REFRESH_SECONDS,
-                                sugar: 0,
-                                arrow: ARROW_NONE,
-                                age: 0,
-                                delta: ''
-                            });
+                            resolve(getErrorResponse(error.message));
                         }
                     });
                 } else {
-                    resolve({
-                        error: 'Could not get authorization token. Got ' + tokenResponse.statusCode,
-                        refresh: REFRESH_SECONDS,
-                        sugar: 0,
-                        arrow: ARROW_NONE,
-                        age: 0,
-                        delta: ''
-                    });
+                    resolve(getErrorResponse('Could not get authorization token. Got ' + tokenResponse.statusCode));
                 }
             }).on("error", (err: any) => {
             console.error("Error: " + err.message);
-            resolve({
-                error: err.message,
-                refresh: REFRESH_SECONDS,
-                sugar: 0,
-                arrow: ARROW_NONE,
-                age: 0,
-                delta: ''
-            });
+            resolve(getErrorResponse(err.message));
         });
     });
 }
+
 
 function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutData> {
     return new Promise((resolve) => {
@@ -110,14 +93,7 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
         };
         https.get(request_options, (resp: any) => {
             if (resp.statusCode !== 200) {
-                resolve({
-                    error: 'Could not get entries. Code ' + resp.statusCode,
-                    refresh: REFRESH_SECONDS,
-                    sugar: 0,
-                    arrow: ARROW_NONE,
-                    age: 0,
-                    delta: ''
-                });
+                resolve(getErrorResponse('Could not get entries. Code ' + resp.statusCode));
                 return;
             }
 
@@ -140,75 +116,45 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
 
 
                     if (smootheddata && smootheddata.length > 1) {
-                        let currentDate = new Date();
-
-                        console.log("\n" + currentDate.toISOString() + ":");
-                        console.log(smootheddata[0].smoothed + " " + smootheddata[0].timestamp);
-                        console.log(smootheddata[1].smoothed + " " + smootheddata[2].timestamp);
-
-                        let now = Date.now();
-                        const age = (now - smootheddata[0].timestamp) / 1000;
-                        const ageMinutes = Math.floor(age / 60);
-
+                        const now: number = Date.now();
+                        const age: number = (now - smootheddata[0].timestamp) / 1000;
+                        const ageMinutes: number = Math.floor(age / 60);
                         const sugar: number = smootheddata[0].smoothed;
-
                         const delta: number = Math.floor(sugar - smootheddata[1].smoothed);
-                        var deltaString: string = delta.toString();
-                        if (delta > 0) {
-                            deltaString = "+" + deltaString;
-                        }
-
+                        const sign: string = delta > 0 ? '+' : delta < 0 ? '-' : PLUS_MINUS;
+                        const absoluteDelta: number = Math.abs(delta);
                         const arrow: string = getTrendArrowSymbol(smootheddata[0], smootheddata[1]);
 
                         let refresh_seconds: number = REFRESH_SECONDS
+
                         if ((smootheddata[0].timestamp + 300000 - now) < 60000) {
                             refresh_seconds = Math.ceil((smootheddata[0].timestamp + 300000 - now) / 1000) + 5;
-                        }
-                        if (refresh_seconds < 0) {
-                            refresh_seconds = 5;
+                            refreshRate.seconds = refresh_seconds;
+                        } else {
+                            refreshRate.seconds = REFRESH_SECONDS;
                         }
 
                         resolve({
                             error: '',
-                            refresh: refresh_seconds,
                             sugar: sugar,
                             arrow: arrow,
                             age: ageMinutes,
-                            delta: deltaString
+                            sign: sign,
+                            delta: absoluteDelta,
+                            rawEntries: entriesJson
                         });
                     } else {
-                        resolve({
-                            error: 'Not enough data',
-                            refresh: REFRESH_SECONDS,
-                            sugar: 0,
-                            arrow: ARROW_NONE,
-                            age: 0,
-                            delta: ''
-                        });
+                        resolve(getErrorResponse('Not enough data'));
                     }
                 } catch (error: any) {
                     console.error("Error parsing entries: " + error.message);
-                    resolve({
-                        error: error.message,
-                        refresh: REFRESH_SECONDS,
-                        sugar: 0,
-                        arrow: ARROW_NONE,
-                        age: 0,
-                        delta: ''
-                    });
+                    resolve(getErrorResponse(error.message));
                 }
             });
 
         }).on("error", (err: any) => {
             console.log("Error: " + err.message);
-            resolve({
-                error: err.message,
-                refresh: REFRESH_SECONDS,
-                sugar: 0,
-                arrow: ARROW_NONE,
-                age: 0,
-                delta: ''
-            });
+            resolve(getErrorResponse(err.message));
         });
     });
 }
@@ -228,5 +174,17 @@ function getTrendArrowSymbol(current: Entry, previous: Entry) {
     if (slopeByMinute <= 3.5) return ARROW_SINGLE_UP;
     if (slopeByMinute <= 40) return ARROW_DOUBLE_UP;
     return ARROW_NONE;
+}
+
+function getErrorResponse(message: string): NightscoutData {
+    return {
+        error: message,
+        sugar: 0,
+        arrow: ARROW_NONE,
+        age: 0,
+        sign: '',
+        delta: 0,
+        rawEntries: ''
+    };
 }
 

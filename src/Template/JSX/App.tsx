@@ -1,10 +1,10 @@
-import {TemplateDataType} from "Data/PrepareData.js";
 import Time from "./Time.js";
 import HackerNews from "./HackerNews.js";
+import {NightscoutData} from "../../Data/NightscoutData.js";
 
-export let templateData: TemplateDataType;
+export let templateData: NightscoutData;
 
-export default function App(data: TemplateDataType) {
+export default function App(data: NightscoutData) {
     templateData = data; // easier than passing to children via props
     return <div style={{
         fontSize: 22,

@@ -1,4 +1,4 @@
-import {Router, Request, Response, NextFunction} from 'express';
+import {NextFunction, Request, Response, Router} from 'express';
 import {IncomingHttpHeaders} from 'http';
 import {displayRoute} from "./Display.js";
 import {setupRoute} from "./Setup.js";
@@ -36,6 +36,7 @@ BYOSRoutes.get(ROUTE_BYOS_SETUP.slice(4), async (req: Request, res: Response) =>
 });
 
 BYOSRoutes.get(ROUTE_BYOS_DISPLAY.slice(4), async (req: Request, res: Response) => {
+    console.log('called: " + ROUTE_BYOS_DISPLAY');
     const macId = getMacId(req);
     res.json(await displayRoute(macId, req.headers));
 });

@@ -1,11 +1,10 @@
-import {prepareData} from "Data/PrepareData.js";
 import {TEMPLATE_FOLDER} from "Config.js";
 import {renderToImage} from "./RenderHTML.js";
 import {buildLiquid} from "./BuildLiquid.js";
 import crypto from "crypto";
 import {readFileSync} from "node:fs";
 import {PNGto1BIT} from "./PNGto1BIT.js";
-import {NightscoutData} from "../Data/NightscoutData.js";
+import {getNightscoutData, NightscoutData} from "../Data/NightscoutData.js";
 
 const headerHtml = readFileSync(TEMPLATE_FOLDER + '/Header.html', 'utf8');
 
@@ -17,7 +16,7 @@ const screens = [
 
 export async function buildScreen() {
     const randomScreen = screens[Math.floor(Math.random() * screens.length)];
-    const templateData = await prepareData();
+    const templateData = await getNightscoutData();
     const html = await randomScreen(templateData);
     const image = await renderToImage(headerHtml + html);
     return PNGto1BIT(image);
