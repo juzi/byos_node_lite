@@ -1,11 +1,12 @@
 import express, {NextFunction, Request, Response} from "express";
 import {
+    BYOS_ENABLED,
+    IS_TEST_ENV,
+    REFRESH_RATE_SECONDS,
+    SCREEN_URL,
     SECRET_KEY,
     SERVER_HOST,
-    SERVER_PORT,
-    BYOS_ENABLED,
-    REFRESH_RATE_SECONDS,
-    SCREEN_URL, IS_TEST_ENV
+    SERVER_PORT
 } from "Config.js";
 import {buildScreen, checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {BYOSRoutes} from "BYOS/BYOSRoutes.js";
@@ -64,7 +65,8 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 if (!IS_TEST_ENV) {
-    app.listen(SERVER_PORT, SERVER_HOST, async (error) => {
+    const serverHost: string = process.env['SERVER_HOST'] || SERVER_HOST;
+    app.listen(SERVER_PORT, serverHost, async (error) => {
         if (error) {
             throw error;
         } else {
