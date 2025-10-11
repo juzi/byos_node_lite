@@ -6,7 +6,7 @@ const NIGHTSCOUT_HOST = 'nightscout.zimmercarral.net';
 
 const REFRESH_SECONDS = 60;
 const PLUS_MINUS = '\u00b1'; // Plus-Minus sign
-const ARROW_FLAT = '\u279d';
+const ARROW_FLAT = '\u2192';
 const ARROW_FORTYFIVE_UP = '\u2197';
 const ARROW_FORTYFIVE_DOWN = '\u2198';
 const ARROW_SINGLE_UP = '\u2191';
@@ -129,6 +129,9 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
 
                         if ((smootheddata[0].timestamp + 300000 - now) < 60000) {
                             refresh_seconds = Math.ceil((smootheddata[0].timestamp + 300000 - now) / 1000) + 5;
+			    if (refresh_seconds < 0) {
+			        refresh_seconds = 5;
+		            }
                             refreshRate.seconds = refresh_seconds;
                         } else {
                             refreshRate.seconds = REFRESH_SECONDS;

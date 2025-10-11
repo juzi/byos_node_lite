@@ -28,7 +28,6 @@ let displayFromProxy = true; // one by one
 
 export async function displayRoute(macId: string, headers: IncomingHttpHeaders): Promise<DisplayResponse> {
     const accessToken = readAccessToken(headers);
-    console.log("Access Token", accessToken);
     updateBattery(Number(headers['battery-voltage']));
     if (BYOS_PROXY && !displayFromProxy) {
         displayFromProxy = true;
