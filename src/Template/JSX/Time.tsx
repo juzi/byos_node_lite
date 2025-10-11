@@ -1,5 +1,3 @@
-import {templateData} from "./App.js";
-
 export default function Time({style}: { style: React.CSSProperties }) {
     return <div style={{
         backgroundColor: '#000',
@@ -8,6 +6,6 @@ export default function Time({style}: { style: React.CSSProperties }) {
         display: 'flex',
         ...style
     }}>
-        <div>{templateData.time}</div>
+        <div></div>
     </div>;
 }

@@ -74,7 +74,7 @@ export async function getNightscoutData(): Promise<NightscoutData> {
                     resolve(getErrorResponse('Could not get authorization token. Got ' + tokenResponse.statusCode));
                 }
             }).on("error", (err: any) => {
-            console.error("Error: " + err.message);
+            console.error("Error retrieving Nightscout token: " + err.message);
             resolve(getErrorResponse(err.message));
         });
     });
