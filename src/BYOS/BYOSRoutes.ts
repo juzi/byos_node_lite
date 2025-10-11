@@ -36,7 +36,7 @@ BYOSRoutes.get(ROUTE_BYOS_SETUP.slice(4), async (req: Request, res: Response) =>
 });
 
 BYOSRoutes.get(ROUTE_BYOS_DISPLAY.slice(4), async (req: Request, res: Response) => {
-    console.log('called: " + ROUTE_BYOS_DISPLAY');
+    console.log('called: ' + ROUTE_BYOS_DISPLAY);
     const macId = getMacId(req);
     res.json(await displayRoute(macId, req.headers));
 });
