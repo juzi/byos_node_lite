@@ -128,7 +128,7 @@
 
         const minValue = Math.min(...values);
 	const maxValue = Math.max(...values);
-        const min = maxValue <= 200 ? 0 : 190;
+        const min = 10; //maxValue <= 200 ? 0 : 190;
         const max = maxValue <= 200 ? 210 : 400;
 	
         new Chart(ctx, {
