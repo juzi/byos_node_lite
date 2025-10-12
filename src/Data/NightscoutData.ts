@@ -113,8 +113,7 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                     entries.forEach((entry: any) =>
                         data.push({value: entry.sgv, timestamp: entry.date, smoothed: entry.sgv}));
                     let smootheddata: Entry[] = smoothen(data);
-
-
+                    
                     if (smootheddata && smootheddata.length > 1) {
                         const now: number = Date.now();
                         const age: number = (now - smootheddata[0].timestamp) / 1000;
@@ -129,9 +128,9 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
 
                         if ((smootheddata[0].timestamp + 300000 - now) < 60000) {
                             refresh_seconds = Math.ceil((smootheddata[0].timestamp + 300000 - now) / 1000) + 5;
-			    if (refresh_seconds < 0) {
-			        refresh_seconds = 5;
-		            }
+                            if (refresh_seconds < 0) {
+                                refresh_seconds = 5;
+                            }
                             refreshRate.seconds = refresh_seconds;
                         } else {
                             refreshRate.seconds = REFRESH_SECONDS;
@@ -144,7 +143,7 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                             age: ageMinutes,
                             sign: sign,
                             delta: absoluteDelta,
-                            rawEntries: entriesJson
+                            rawEntries: JSON.stringify(smootheddata)
                         });
                     } else {
                         resolve(getErrorResponse('Not enough data'));

@@ -22,8 +22,8 @@
 
     div.sign {
         font-size: 100px;
-	font-weight: bolder;
-	text-align: right;
+        font-weight: bolder;
+        text-align: right;
         padding-left: 40px;
         padding-top: 70px;
         padding-right: 0;
@@ -32,7 +32,7 @@
 
     div.delta {
         font-size: 100px;
-	font-weight: bolder;
+        font-weight: bolder;
         padding-top: 70px;
         padding-right: 55px;
     }
@@ -104,9 +104,7 @@
 
     function parseGlucoseData(data) {
         // Sort by date (oldest first) and extract values
-        const sorted = data.result
-            .filter(r => r.isValid)
-            .sort((a, b) => a.date - b.date);
+        const sorted = data.sort((a, b) => a.timestamp - b.timestamp);
         const labels = sorted.map(r => {
             const d = new Date(r.date);
             return d.toLocaleTimeString('de-AT', {
@@ -115,8 +113,7 @@
             });
         });
 
-        const values = sorted.map(r => r.sgv);
-
+        const values = sorted.map(r => r.smoothed);
         return {labels, values};
     }
 
@@ -127,10 +124,10 @@
         Chart.defaults.font.weight = 'bold';
 
         const minValue = Math.min(...values);
-	const maxValue = Math.max(...values);
+        const maxValue = Math.max(...values);
         const min = 10; //maxValue <= 200 ? 0 : 190;
         const max = maxValue <= 200 ? 210 : 400;
-	
+
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -174,10 +171,10 @@
     }
 
     function drawGraph() {
-        const jsonData = {{ rawEntries }};
+        const smoothedData = {{ rawEntries }};
 
         // Initialize the chart
-        const {labels, values} = parseGlucoseData(jsonData);
+        const {labels, values} = parseGlucoseData(smoothedData);
 
         createChart(labels, values);
     }
