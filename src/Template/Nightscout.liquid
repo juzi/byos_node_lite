@@ -103,7 +103,7 @@
         // Sort by date (oldest first) and extract values
         const sorted = data.sort((a, b) => a.timestamp - b.timestamp);
         const labels = sorted.map(r => {
-            const d = new Date(r.date);
+            const d = new Date(r.timestamp);
             return d.toLocaleTimeString('de-AT', {
                 hour: '2-digit',
                 minute: '2-digit'
