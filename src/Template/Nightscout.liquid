@@ -99,9 +99,6 @@
 </div>
 
 <script>
-    // Your JSON data
-
-
     function parseGlucoseData(data) {
         // Sort by date (oldest first) and extract values
         const sorted = data.sort((a, b) => a.timestamp - b.timestamp);
@@ -154,6 +151,28 @@
                     },
                     tooltip: {
                         enabled: false
+                    },
+                    annotation: {
+                        drawTime: "afterDraw",
+                        annotations: [{
+                            id: "line70",
+                            type: "line",
+                            mode: "horizontal",
+                            scaleID: "y",
+                            value: 70,
+                            borderWidth: 2,
+                            borderColor: "#000000",
+                            borderDash: [2, 4],
+                        }, {
+                            id: "line180",
+                            type: "line",
+                            mode: "horizontal",
+                            scaleID: "y",
+                            value: 180,
+                            borderWidth: 2,
+                            borderColor: "#000000",
+                            borderDash: [2, 4],
+                        }]
                     }
                 },
                 scales: {
