@@ -8,7 +8,7 @@
 
     div.sugaranddelta {
         display: grid;
-        grid-template-columns: 350px 100px 120px 220px;
+        grid-template-columns: 350px 100px 100px 250px;
         grid-gap: 20px;
         width: 100%;
     }
@@ -38,9 +38,9 @@
     }
 
     div.arrow {
-        font-size: 130px;
+        font-size: 150px;
         font-weight: 500;
-        padding-top: 50px;
+        padding-top: 20px;
     }
 
 
@@ -126,7 +126,11 @@
         Chart.defaults.font.size = 24;
         Chart.defaults.font.weight = 'bold';
 
-
+        const minValue = Math.min(...values);
+	const maxValue = Math.max(...values);
+        const min = maxValue <= 200 ? 0 : 190;
+        const max = maxValue <= 200 ? 210 : 400;
+	
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -158,8 +162,8 @@
                 scales: {
                     y: {
                         beginAtZero: false,
-                        min: Math.floor(Math.min(...values) / 10) * 10,
-                        max: Math.ceil(Math.max(...values) / 10) * 10,
+                        min: min,
+                        max: max,
                     },
                     x: {
                         display: false
