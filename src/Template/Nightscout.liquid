@@ -128,7 +128,7 @@
         const minValue = Math.min(...values);
         const maxValue = Math.max(...values);
         const min = 30; 
-        const max =  Math.ceil(maxValue / 10) * 10 + 10
+        const max = (Math.max(180, Math.ceil(maxValue / 10) * 10 + 10))
 
         new Chart(ctx, {
             type: 'line',
