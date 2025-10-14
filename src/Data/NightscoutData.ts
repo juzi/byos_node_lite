@@ -13,6 +13,7 @@ const ARROW_SINGLE_UP = '\u2191';
 const ARROW_SINGLE_DOWN = '\u2193';
 const ARROW_DOUBLE_UP = '\u21c8';
 const ARROW_DOUBLE_DOWN = '\u21ca';
+const BATTERY_FULL = '\u{1F50B}';// battery symbol U+1F50B
 const ARROW_NONE = '??';
 
 export type NightscoutData = {
@@ -22,7 +23,13 @@ export type NightscoutData = {
     age: number,
     sign: string,
     delta: number,
-    rawEntries: string
+    rawEntries: string,
+    battery: string
+}
+
+export type DeviceStatus = {
+    error: string;
+    battery: number;
 }
 
 export type NightscoutToken = {
@@ -108,12 +115,11 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                 try {
                     let entriesResponse = JSON.parse(entriesJson);
                     let entries = entriesResponse.result;
-
                     let data: Entry[] = []
                     entries.forEach((entry: any) =>
                         data.push({value: entry.sgv, timestamp: entry.date, smoothed: entry.sgv}));
                     let smootheddata: Entry[] = smoothen(data);
-                    
+
                     if (smootheddata && smootheddata.length > 1) {
                         const now: number = Date.now();
                         const age: number = (now - smootheddata[0].timestamp) / 1000;
@@ -135,15 +141,21 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                         } else {
                             refreshRate.seconds = REFRESH_SECONDS;
                         }
+                        console.log('getting status');
+                        getDeviceStatus(nightscoutToken).then((deviceStatus: DeviceStatus) => {
 
-                        resolve({
-                            error: '',
-                            sugar: sugar,
-                            arrow: arrow,
-                            age: ageMinutes,
-                            sign: sign,
-                            delta: absoluteDelta,
-                            rawEntries: JSON.stringify(smootheddata)
+                            const battery: string = deviceStatus.error ? '' : BATTERY_FULL + " " + deviceStatus.battery + "%";
+
+                            resolve({
+                                error: '',
+                                sugar: sugar,
+                                arrow: arrow,
+                                age: ageMinutes,
+                                sign: sign,
+                                delta: absoluteDelta,
+                                rawEntries: JSON.stringify(smootheddata),
+                                battery: battery
+                            });
                         });
                     } else {
                         resolve(getErrorResponse('Not enough data'));
@@ -161,6 +173,53 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
     });
 }
 
+function getDeviceStatus(nightscoutToken: NightscoutToken): Promise<DeviceStatus> {
+    return new Promise((resolve) => {
+        const request_options = {
+            host: NIGHTSCOUT_HOST,
+            port: 443,
+            path: '/api/v3/devicestatus?sort$desc=created_at&limit=1',
+            headers: {
+                'Authorization': 'Bearer ' + nightscoutToken.token
+            }
+        };
+        console.log('blah');
+        https.get(request_options, (resp: any) => {
+            if (resp.statusCode !== 200) {
+                console.log('error response code' + resp.statusCode);
+                resolve(getStatusErrorResponse('Could not get devicestatus. Code ' + resp.statusCode));
+            }
+
+            let statusJson = '';
+            // A chunk of data has been received.
+            resp.on('data', (chunk: string) => {
+                statusJson += chunk;
+            });
+
+            resp.on('end', () => {
+                try {
+                    let statusResponse = JSON.parse(statusJson);
+                    let statusValues = statusResponse.result;
+                    if (statusValues) {
+                        const battery = statusValues[0].uploaderBattery;
+                        resolve({
+                            error: '',
+                            battery: battery
+                        });
+                    } else {
+                        resolve(getStatusErrorResponse('No devicestatus data'));
+                    }
+                } catch (error: any) {
+                    console.error("Error parsing device status: " + error.message);
+                    resolve(getStatusErrorResponse(error.message));
+                }
+            });
+        }).on("error", (err: any) => {
+            console.log("Error: " + err.message);
+            resolve(getStatusErrorResponse(err.message));
+        });
+    });
+}
 
 function getTrendArrowSymbol(current: Entry, previous: Entry) {
     const slope = current.timestamp === previous.timestamp ? 0.0 :
@@ -178,6 +237,13 @@ function getTrendArrowSymbol(current: Entry, previous: Entry) {
     return ARROW_NONE;
 }
 
+function getStatusErrorResponse(message: string): DeviceStatus {
+    return {
+        error: message,
+        battery: -1
+    };
+}
+
 function getErrorResponse(message: string): NightscoutData {
     return {
         error: message,
@@ -186,7 +252,8 @@ function getErrorResponse(message: string): NightscoutData {
         age: 0,
         sign: '',
         delta: 0,
-        rawEntries: ''
+        rawEntries: '',
+        battery: ''
     };
 }
 
