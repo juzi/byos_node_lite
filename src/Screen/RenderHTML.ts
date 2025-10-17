@@ -23,6 +23,10 @@ export async function initPuppeteer() {
         }
     );
     page = await browser.newPage();
+    const fonts = await page.evaluate(() => {
+        return document.fonts.check('12px LiberationSans');
+    });
+    console.log('LiberationSans available:', fonts);
     await page.setViewport({width: 800, height: 480});
     await page.setRequestInterception(true);
     page.on('pageerror', ({message}) => console.error('error:', message));
