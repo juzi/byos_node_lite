@@ -13,7 +13,6 @@ const ARROW_SINGLE_UP = '\u2191';
 const ARROW_SINGLE_DOWN = '\u2193';
 const ARROW_DOUBLE_UP = '\u21c8';
 const ARROW_DOUBLE_DOWN = '\u21ca';
-const BATTERY_FULL = '\u{1F50B}';// battery symbol U+1F50B
 const ARROW_NONE = '??';
 
 export type NightscoutData = {
@@ -24,7 +23,8 @@ export type NightscoutData = {
     sign: string,
     delta: number,
     rawEntries: string,
-    battery: string
+    battery: string,
+    alert: string
 }
 
 export type DeviceStatus = {
@@ -141,11 +141,10 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                         } else {
                             refreshRate.seconds = REFRESH_SECONDS;
                         }
-                        console.log('getting status');
+
                         getDeviceStatus(nightscoutToken).then((deviceStatus: DeviceStatus) => {
-
                             const battery: string = deviceStatus.error ? '' : deviceStatus.battery.toString();
-
+                            const alert: string = (deviceStatus.battery < 15) ? 'alert' : '';
                             resolve({
                                 error: '',
                                 sugar: sugar,
@@ -154,7 +153,8 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                                 sign: sign,
                                 delta: absoluteDelta,
                                 rawEntries: JSON.stringify(smootheddata),
-                                battery: battery
+                                battery: battery,
+                                alert: alert
                             });
                         });
                     } else {
@@ -253,7 +253,8 @@ function getErrorResponse(message: string): NightscoutData {
         sign: '',
         delta: 0,
         rawEntries: '',
-        battery: ''
+        battery: '',
+        alert: ''
     };
 }
 
