@@ -144,7 +144,7 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                         console.log('getting status');
                         getDeviceStatus(nightscoutToken).then((deviceStatus: DeviceStatus) => {
 
-                            const battery: string = deviceStatus.error ? '' : BATTERY_FULL + " " + deviceStatus.battery + "%";
+                            const battery: string = deviceStatus.error ? '' : deviceStatus.battery.toString();
 
                             resolve({
                                 error: '',
@@ -183,7 +183,7 @@ function getDeviceStatus(nightscoutToken: NightscoutToken): Promise<DeviceStatus
                 'Authorization': 'Bearer ' + nightscoutToken.token
             }
         };
-        console.log('blah');
+
         https.get(request_options, (resp: any) => {
             if (resp.statusCode !== 200) {
                 console.log('error response code' + resp.statusCode);
