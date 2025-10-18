@@ -6,6 +6,7 @@ export const BASE_URL_CHROME = 'http://localhost';
 
 
 let page: Page;
+let count: number = 0;
 
 export async function initPuppeteer() {
     if (!IS_TEST_ENV) {
@@ -56,6 +57,12 @@ export async function initPuppeteer() {
 
 
 export async function renderToImage(html: string) {
+    count++;
+    if (count > 720) {
+       page = null;
+       await initPuppeteer();
+       count = 0;
+    }
     await page.addStyleTag({
         content: `
     * {
