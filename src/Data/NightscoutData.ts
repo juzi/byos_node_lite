@@ -56,29 +56,28 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                     let data: Entry[] = []
                     entries.forEach((entry: any) =>
                         data.push({value: entry.sgv, timestamp: entry.date, smoothed: entry.sgv}));
-                    let smootheddata: Entry[] = smoothen(data);
+                    let smoothedEntries: Entry[] = smoothen(data);
 
-                    if (smootheddata && smootheddata.length > 1) {
+                    if (smoothedEntries && smoothedEntries.length > 1) {
                         const now: number = Date.now();
-                        const age: number = (now - smootheddata[0].timestamp) / 1000;
+                        const age: number = (now - smoothedEntries[0].timestamp) / 1000;
                         const ageMinutes: number = Math.floor(age / 60);
-                        const sugar: number = smootheddata[0].smoothed;
-                        const delta: number = Math.floor(sugar - smootheddata[1].smoothed);
+                        const glucoseValue: number = smoothedEntries[0].smoothed;
+                        const delta: number = Math.floor(glucoseValue - smoothedEntries[1].smoothed);
                         const sign: string = delta > 0 ? '+' : delta < 0 ? '-' : PLUS_MINUS;
                         const absoluteDelta: number = Math.abs(delta);
-                        const arrow: string = getTrendArrowSymbol(smootheddata[0], smootheddata[1]);
+                        const arrow: string = getTrendArrowSymbol(smoothedEntries[0], smoothedEntries[1]);
 
-                        let refresh_seconds: number = REFRESH_SECONDS
+                        let refreshSeconds: number = REFRESH_SECONDS
 
-                        if ((smootheddata[0].timestamp + 300000 - now) < 60000) {
-                            refresh_seconds = Math.ceil((smootheddata[0].timestamp + 300000 - now) / 1000) + 5;
-                            if (refresh_seconds < 0) {
-                                refresh_seconds = 5;
+                        if ((smoothedEntries[0].timestamp + 300000 - now) < 60000) {
+                            refreshSeconds = Math.ceil((smoothedEntries[0].timestamp + 300000 - now) / 1000) + 5;
+                            if (refreshSeconds < 0) {
+                                refreshSeconds = 5;
                             }
-                            refreshRate.seconds = refresh_seconds;
-                        } else {
-                            refreshRate.seconds = REFRESH_SECONDS;
                         }
+                        refreshRate.seconds = refreshSeconds;
+
                         getState().then((state) => {
                             getDeviceStatus().then((deviceStatus) => {
                                 const battery: string = deviceStatus.error ? '' : deviceStatus.battery.toString();
@@ -86,12 +85,12 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                                 const iob: string = state.error ? '?' : (Math.round(state.iob * 100) / 100).toFixed(2);
                                 resolve({
                                     error: '',
-                                    sugar: sugar,
+                                    sugar: glucoseValue,
                                     arrow: arrow,
                                     age: ageMinutes,
                                     sign: sign,
                                     delta: absoluteDelta,
-                                    rawEntries: JSON.stringify(smootheddata),
+                                    rawEntries: JSON.stringify(smoothedEntries),
                                     iob: iob,
                                     battery: battery,
                                     alert: alert
