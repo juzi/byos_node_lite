@@ -63,16 +63,16 @@
         display: grid;
         grid-column: 1 / span 3;
         grid-row: 3 / span 2;
-        grid-template-columns: 150px 150px;
+        grid-template-columns: 100px 100px 100px;
         grid-template-rows: 100px 100px;
         grid-gap: 40px;
-        width: 100%;
         padding-left: 30px;
+	padding-right: 30px;
         font-weight: bold;
     }
 
     div.age {
-        grid-column: 1 / span 2;
+        grid-column: 1 / span 3;
         grid-row: 1;
         font-size: 100px;
         padding-left: 30px;
@@ -81,17 +81,9 @@
     div.iob {
         grid-column: 1;
         grid-row: 2;
-        font-size: 30px;
-        padding-top: 5px;
+        font-size: 35px;
         padding-left: 30px;
     }
-
-    /*.iob-and-battery {*/
-    /*    grid-column: 1;*/
-    /*    grid-row: 2;*/
-    /*    padding-top: 10px;*/
-    /*    !*padding-left: 30px;*!*/
-    /*}*/
 
     .battery {
         grid-column: 2;
@@ -99,10 +91,10 @@
         border: 3px solid #333;
         width: 25px;
         height: 36px;
-        padding: 2px;
         border-radius: 4px;
+	padding: 2px;
         position: relative;
-        /*margin: 15px 0 0 80px;*/
+        margin-left: 40px;
 
         &:before {
             content: '';
@@ -152,12 +144,11 @@
         }
     }
 
-    text.batterytext {
-        font-size: 30px;
-        vertical-align: center;
-        padding-top: 0;
-        padding-left: 40px;
-        padding-bottom: 5px;
+    div.batterytext {
+        grid-column: 3;
+        grid-row: 2;
+        font-size: 35px;
+	margin-left: -60px;
     }
 
     div.graph {
@@ -196,8 +187,10 @@
                 </div>
                 <div class="grid-child battery">
                     <div class="battery-level {{ alert }}" style="height:{{ battery }}%;"></div>
-                    <text class="batterytext">{{ battery }}%</text>
                 </div>
+                <div class="grid-child batterytext">
+	            <text>{{ battery }}%</text>
+	        </div>
             </div>
 
             <div class="grid-child graph">
