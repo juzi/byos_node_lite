@@ -1,97 +1,28 @@
 import https from 'https';
 import smoothen from "./smoothing.js";
 import {refreshRate} from "../BYOS/Display.js";
+import {Entry, NightscoutData, NightscoutToken} from './NightscoutTypes.js';
+import {NIGHTSCOUT_HOST, PLUS_MINUS, REFRESH_SECONDS} from './NightscoutConstants.js';
+import {getValidToken} from './NightscoutAuth.js';
+import {getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
+import {getDeviceStatus} from './DeviceStatus.js';
+import {getState} from './State.js';
 
-const NIGHTSCOUT_HOST = 'nightscout.zimmercarral.net';
+// Re-export types for backward compatibility
+export type {NightscoutData, NightscoutToken, Entry, DeviceStatus, State} from './NightscoutTypes.js';
 
-const REFRESH_SECONDS = 60;
-const PLUS_MINUS = '\u00b1'; // Plus-Minus sign
-const ARROW_FLAT = '\u2192';
-const ARROW_FORTYFIVE_UP = '\u2197';
-const ARROW_FORTYFIVE_DOWN = '\u2198';
-const ARROW_SINGLE_UP = '\u2191';
-const ARROW_SINGLE_DOWN = '\u2193';
-const ARROW_DOUBLE_UP = '\u21c8';
-const ARROW_DOUBLE_DOWN = '\u21ca';
-const ARROW_NONE = '??';
-
-export type NightscoutToken = {
-    token: string;
-    expirationDateTime: number;
-}
-
-export type NightscoutData = {
-    error: string;
-    sugar: number,
-    arrow: string,
-    age: number,
-    sign: string,
-    delta: number,
-    rawEntries: string,
-    iob: string,
-    battery: string,
-    alert: string
-}
-
-export type DeviceStatus = {
-    error: string;
-    battery: number;
-}
-
-export type Entry = {
-    value: number;
-    timestamp: number;
-    smoothed: number;
-}
-
-export type State = {
-    error: string;
-    iob: number;
-}
-
-const nightscoutToken: NightscoutToken = {token: '', expirationDateTime: Date.now()};
+// Re-export functions for backward compatibility
+export {getDeviceStatus} from './DeviceStatus.js';
+export {getState} from './State.js';
 
 export async function getNightscoutData(): Promise<NightscoutData> {
-    // If we have a valid auth token, use it. Usually, tokens from Nightscout are valid for 8 hours.
-    if (nightscoutToken.token
-        && nightscoutToken.expirationDateTime && nightscoutToken.expirationDateTime - 2000 > Date.now()) {
-        return getLatestValues(nightscoutToken);
+    try {
+        const token = await getValidToken();
+        return getLatestValues(token);
+    } catch (error: any) {
+        console.error(error.message);
+        return getErrorResponse(error.message);
     }
-
-    // otherwise retrieve a new token and use that.
-    return new Promise((resolve) => {
-        https.get('https://' + NIGHTSCOUT_HOST + '/api/v2/authorization/request/token=' + process.env['NIGHTSCOUT_API_SECRET'],
-            (tokenResponse: any) => {
-                if (tokenResponse.statusCode === 200) {
-                    let jwtBody = "";
-
-                    tokenResponse.on("data", (chunk: string) => {
-                        jwtBody += chunk;
-                    });
-
-                    tokenResponse.on("end", async () => {
-                        try {
-                            const jwtToken = JSON.parse(jwtBody);
-                            const token = jwtToken.token;
-                            const expirationDateTime = jwtToken.exp * 1000;
-                            nightscoutToken.token = token;
-                            nightscoutToken.expirationDateTime = expirationDateTime;
-
-                            const result = await getLatestValues(nightscoutToken);
-                            resolve(result);
-                        } catch (error: any) {
-                            console.error(error.message);
-                            resolve(getErrorResponse(error.message));
-                        }
-                    });
-                } else {
-                    resolve(getErrorResponse('Could not get authorization token. Got ' + tokenResponse.statusCode));
-                }
-            }).on("error", (err: any) => {
-            console.error("Error retrieving Nightscout token: " + err.message);
-            resolve(getErrorResponse(err.message));
-        });
-    });
 }
 
 
@@ -148,8 +79,8 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                         } else {
                             refreshRate.seconds = REFRESH_SECONDS;
                         }
-                        getSummary(nightscoutToken).then((state: State) => {
-                            getDeviceStatus(nightscoutToken).then((deviceStatus: DeviceStatus) => {
+                        getState().then((state) => {
+                            getDeviceStatus().then((deviceStatus) => {
                                 const battery: string = deviceStatus.error ? '' : deviceStatus.battery.toString();
                                 const alert: string = (deviceStatus.battery < 15) ? 'alert' : '';
                                 const iob: string = state.error ? '?' : (Math.round(state.iob * 100) / 100).toFixed(2);
@@ -182,145 +113,3 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
         });
     });
 }
-
-function getDeviceStatus(nightscoutToken: NightscoutToken): Promise<DeviceStatus> {
-    return new Promise((resolve) => {
-        const request_options = {
-            host: NIGHTSCOUT_HOST,
-            port: 443,
-            path: '/api/v3/devicestatus?sort$desc=created_at&limit=1',
-            headers: {
-                'Authorization': 'Bearer ' + nightscoutToken.token
-            }
-        };
-
-        https.get(request_options, (resp: any) => {
-            if (resp.statusCode !== 200) {
-                console.log('error response code' + resp.statusCode);
-                resolve(getStatusErrorResponse('Could not get devicestatus. Code ' + resp.statusCode));
-            }
-
-            let statusJson = '';
-            // A chunk of data has been received.
-            resp.on('data', (chunk: string) => {
-                statusJson += chunk;
-            });
-
-            resp.on('end', () => {
-                try {
-                    let statusResponse = JSON.parse(statusJson);
-                    let statusValues = statusResponse.result;
-                    if (statusValues) {
-                        const battery = statusValues[0].uploaderBattery;
-                        resolve({
-                            error: '',
-                            battery: battery
-                        });
-                    } else {
-                        resolve(getStatusErrorResponse('No devicestatus data'));
-                    }
-                } catch (error: any) {
-                    console.error("Error parsing device status: " + error.message);
-                    resolve(getStatusErrorResponse(error.message));
-                }
-            });
-        }).on("error", (err: any) => {
-            console.log("Error: " + err.message);
-            resolve(getStatusErrorResponse(err.message));
-        });
-    });
-}
-
-function getSummary(nightscoutToken: NightscoutToken): Promise<State> {
-    return new Promise((resolve) => {
-        const request_options = {
-            host: NIGHTSCOUT_HOST,
-            port: 443,
-            path: '/api/v2/summary',
-            headers: {
-                'Authorization': 'Bearer ' + nightscoutToken.token
-            }
-        };
-
-        https.get(request_options, (resp: any) => {
-            if (resp.statusCode !== 200) {
-                console.log('error response code' + resp.statusCode);
-                resolve(getSummaryErrorResponse('Could not get summary. Code ' + resp.statusCode));
-            }
-
-            let summaryJson = '';
-            // A chunk of data has been received.
-            resp.on('data', (chunk: string) => {
-                summaryJson += chunk;
-            });
-
-            resp.on('end', () => {
-                try {
-                    let summaryResponse = JSON.parse(summaryJson);
-
-                    if (summaryResponse) {
-                        const iob: number = summaryResponse.state.iob;
-                        resolve({
-                            error: '',
-                            iob: iob
-                        });
-                    } else {
-                        resolve(getSummaryErrorResponse('No summary data'));
-                    }
-                } catch (error: any) {
-                    console.error("Error parsing device status: " + error.message);
-                    resolve(getSummaryErrorResponse(error.message));
-                }
-            });
-        }).on("error", (err: any) => {
-            console.log("Error: " + err.message);
-            resolve(getSummaryErrorResponse(err.message));
-        });
-    });
-}
-
-function getTrendArrowSymbol(current: Entry, previous: Entry) {
-    const slope = current.timestamp === previous.timestamp ? 0.0 :
-        (previous.smoothed - current.smoothed) / (previous.timestamp - current.timestamp);
-
-    const slopeByMinute = slope * 60000;
-
-    if (slopeByMinute <= -3.5) return ARROW_DOUBLE_DOWN;
-    if (slopeByMinute <= -2) return ARROW_SINGLE_DOWN;
-    if (slopeByMinute <= -1) return ARROW_FORTYFIVE_DOWN;
-    if (slopeByMinute <= 1) return ARROW_FLAT;
-    if (slopeByMinute <= 2) return ARROW_FORTYFIVE_UP;
-    if (slopeByMinute <= 3.5) return ARROW_SINGLE_UP;
-    if (slopeByMinute <= 40) return ARROW_DOUBLE_UP;
-    return ARROW_NONE;
-}
-
-function getStatusErrorResponse(message: string): DeviceStatus {
-    return {
-        error: message,
-        battery: -1
-    };
-}
-
-function getSummaryErrorResponse(message: string): State {
-    return {
-        error: message,
-        iob: 0
-    };
-}
-
-function getErrorResponse(message: string): NightscoutData {
-    return {
-        error: message,
-        sugar: 0,
-        arrow: ARROW_NONE,
-        age: 0,
-        sign: '',
-        delta: 0,
-        rawEntries: '',
-        iob: '',
-        battery: '',
-        alert: ''
-    };
-}
-

@@ -1,4 +1,4 @@
-import type {Entry} from "./NightscoutData.js";
+import type {Entry} from "./NightscoutTypes.js";
 
 /**
  * TSUNAMI DATA SMOOTHING CORE
