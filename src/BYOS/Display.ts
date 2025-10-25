@@ -45,7 +45,7 @@ export async function displayRoute(macId: string, headers: IncomingHttpHeaders):
         console.error(`[DISPLAY] [${macId}] Wrong access-token value from device: ${accessToken}`);
         throw new Error('Wrong access-token value from device');
     }
-    console.log('display route refresh: ' + refreshRate.seconds + 's');
+
     return {
         status: 0,
         filename: 'custom-screen-' + await getScreenHash(), // screen wouldn't update if data is not changed
