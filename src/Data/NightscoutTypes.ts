@@ -13,12 +13,14 @@ export type NightscoutData = {
     rawEntries: string,
     iob: string,
     battery: string,
+    charging: string,
     alert: string
 }
 
 export type DeviceStatus = {
     error: string;
     battery: number;
+    isCharging: boolean;
 }
 
 export type Entry = {

@@ -2,7 +2,7 @@ import https from 'https';
 import smoothen from "./smoothing.js";
 import {refreshRate} from "../BYOS/Display.js";
 import {Entry, NightscoutData, NightscoutToken} from './NightscoutTypes.js';
-import {NIGHTSCOUT_HOST, PLUS_MINUS, REFRESH_SECONDS} from './NightscoutConstants.js';
+import {ELECTRIC_PLUG, NIGHTSCOUT_HOST, PLUS_MINUS, REFRESH_SECONDS} from './NightscoutConstants.js';
 import {getValidToken} from './NightscoutAuth.js';
 import {getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
 import {getDeviceStatus} from './DeviceStatus.js';
@@ -81,6 +81,7 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                         getState().then((state) => {
                             getDeviceStatus().then((deviceStatus) => {
                                 const battery: string = deviceStatus.error ? '' : deviceStatus.battery.toString();
+                                const isCharging: string = deviceStatus.isCharging ? ELECTRIC_PLUG : '';
                                 const alert: string = (deviceStatus.battery < 15) ? 'alert' : '';
                                 const iob: string = state.error ? '?' : (Math.round(state.iob * 100) / 100).toFixed(2);
                                 resolve({
@@ -93,6 +94,7 @@ function getLatestValues(nightscoutToken: NightscoutToken): Promise<NightscoutDa
                                     rawEntries: JSON.stringify(smoothedEntries),
                                     iob: iob,
                                     battery: battery,
+                                    charging: isCharging,
                                     alert: alert
                                 });
                             });

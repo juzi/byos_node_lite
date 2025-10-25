@@ -45,7 +45,8 @@ function getDeviceStatusWithToken(nightscoutToken: NightscoutToken): Promise<Dev
                         const battery = statusValues[0].uploaderBattery;
                         resolve({
                             error: '',
-                            battery: battery
+                            battery: battery,
+                            isCharging: statusValues[0].isCharging
                         });
                     } else {
                         resolve(getStatusErrorResponse('No devicestatus data'));

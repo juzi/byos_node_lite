@@ -1,13 +1,13 @@
-import {Entry, NightscoutData, DeviceStatus, State} from './NightscoutTypes.js';
+import {DeviceStatus, Entry, NightscoutData, State} from './NightscoutTypes.js';
 import {
-    ARROW_NONE,
     ARROW_DOUBLE_DOWN,
-    ARROW_SINGLE_DOWN,
-    ARROW_FORTYFIVE_DOWN,
+    ARROW_DOUBLE_UP,
     ARROW_FLAT,
+    ARROW_FORTYFIVE_DOWN,
     ARROW_FORTYFIVE_UP,
-    ARROW_SINGLE_UP,
-    ARROW_DOUBLE_UP
+    ARROW_NONE,
+    ARROW_SINGLE_DOWN,
+    ARROW_SINGLE_UP
 } from './NightscoutConstants.js';
 
 export function getTrendArrowSymbol(current: Entry, previous: Entry): string {
@@ -29,7 +29,8 @@ export function getTrendArrowSymbol(current: Entry, previous: Entry): string {
 export function getStatusErrorResponse(message: string): DeviceStatus {
     return {
         error: message,
-        battery: -1
+        battery: -1,
+        isCharging: false
     };
 }
 
@@ -51,6 +52,7 @@ export function getErrorResponse(message: string): NightscoutData {
         rawEntries: '',
         iob: '',
         battery: '',
+        charging: '',
         alert: ''
     };
 }

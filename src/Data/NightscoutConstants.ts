@@ -11,3 +11,4 @@ export const ARROW_SINGLE_DOWN = '\u2193';
 export const ARROW_DOUBLE_UP = '\u21c8';
 export const ARROW_DOUBLE_DOWN = '\u21ca';
 export const ARROW_NONE = '??';
+export const ELECTRIC_PLUG = '\uD83D\uDDF2';
