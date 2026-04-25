@@ -42,6 +42,7 @@ app.get(ROUTE_PLUGIN_REDIRECT, async (req: Request, res: Response) => {
         filename: 'custom-screen-' + await getScreenHash(), // screen wouldn't update if data is not changed
         url: SCREEN_URL,
         refresh_rate: REFRESH_RATE_SECONDS,
+	maximum_compatibility: true
     });
 });
 
