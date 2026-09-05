@@ -5,7 +5,7 @@ import {ASSETS_FOLDER, IS_TEST_ENV} from "Config.js";
 export const BASE_URL_CHROME = 'http://localhost';
 
 
-let page: Page;
+let page: Page | null = null;
 let count: number = 0;
 
 export async function initPuppeteer() {
@@ -56,6 +56,17 @@ export async function initPuppeteer() {
 }
 
 
+async function getPage(): Promise<Page> {
+    if (!page) {
+        await initPuppeteer();
+    }
+    if (!page) {
+        throw new Error('Could not open a Puppeteer page');
+    }
+    return page;
+}
+
+
 export async function renderToImage(html: string) {
     count++;
     if (count > 720) {
@@ -63,7 +74,8 @@ export async function renderToImage(html: string) {
        await initPuppeteer();
        count = 0;
     }
-    await page.addStyleTag({
+    const currentPage = await getPage();
+    await currentPage.addStyleTag({
         content: `
     * {
       filter: grayscale(100%) contrast(1000%) brightness(100%);
@@ -71,8 +83,8 @@ export async function renderToImage(html: string) {
     }
     `
     });
-    await page.setContent(html, {waitUntil: "domcontentloaded"});
-    const image: Uint8Array = await page.screenshot();
+    await currentPage.setContent(html, {waitUntil: "domcontentloaded"});
+    const image: Uint8Array = await currentPage.screenshot();
     // const buffer = await sharp(image)
     //     .threshold(0) // Adjust threshold value (0-255) as needed
     //     .toColorspace('b-w')
