@@ -33,6 +33,13 @@
 │- refreshToken() │ │- getError*()   │ └──────────────────┘
 │- isTokenValid() │ └────────────────┘
 └────────┬────────┘          │
+         │ uses              │
+         ▼                   │
+┌──────────────────────┐     │
+│  NightscoutHttp.ts   │     │  ← every request goes through here
+│- getNightscoutJson() │     │
+│- lookupWithFallback()│     │
+└────────┬─────────────┘     │
          │                   │
          └───────────────────┘
                    │ uses
@@ -40,6 +47,7 @@
          ┌────────────────────┐
          │NightscoutConstants │
          │- NIGHTSCOUT_HOST   │
+         │- Request tuning    │
          │- Arrow symbols     │
          └────────────────────┘
 ```
@@ -73,6 +81,19 @@
 - Token validation
 - Token refresh logic
 - Authentication abstraction layer
+
+**NightscoutHttp.ts**
+
+- `getNightscoutJson()`: the single HTTPS GET used by all four fetchers
+- Retries transient failures (DNS, connection, timeout, 5xx/429) with an exponential backoff;
+  a 4xx or a malformed body fails immediately, since retrying cannot help
+- `reuseLastGoodResponse` serves the previous body of the same path when every attempt failed,
+  capped by `RESPONSE_FALLBACK_MAX_AGE_MS` -- glucose entries keep their original timestamps,
+  so a reused reading is displayed with its real age instead of looking fresh
+- `lookupWithFallback()`: the lookup handed to `https.get`. It remembers the address the host
+  resolved to and reuses it when a later lookup fails, which keeps the display working through
+  the DNS outages a VPN on the same host causes. The hostname still drives SNI and the Host
+  header, so TLS is unaffected
 
 **NightscoutUtils.ts** (56 lines)
 

@@ -1,6 +1,5 @@
-import https from 'https';
 import {NightscoutToken} from './NightscoutTypes.js';
-import {NIGHTSCOUT_HOST} from './NightscoutConstants.js';
+import {getNightscoutJson} from './NightscoutHttp.js';
 
 const nightscoutToken: NightscoutToken = {token: '', expirationDateTime: Date.now()};
 
@@ -13,37 +12,19 @@ export function isTokenValid(token: NightscoutToken): boolean {
 }
 
 export async function refreshToken(): Promise<NightscoutToken> {
-    return new Promise((resolve, reject) => {
-        https.get('https://' + NIGHTSCOUT_HOST + '/api/v2/authorization/request/token=' + process.env['NIGHTSCOUT_API_SECRET'],
-            (tokenResponse: any) => {
-                if (tokenResponse.statusCode === 200) {
-                    let jwtBody = "";
+    // No reuse of a cached response here: a stale token is an expired token, and the caller
+    // already keeps the valid one in memory.
+    const jwtToken = await getNightscoutJson(
+        '/api/v2/authorization/request/token=' + process.env['NIGHTSCOUT_API_SECRET'],
+        'authorization token');
 
-                    tokenResponse.on("data", (chunk: string) => {
-                        jwtBody += chunk;
-                    });
+    if (!jwtToken || !jwtToken.token || !jwtToken.exp) {
+        throw new Error('Could not get authorization token. No token in the response');
+    }
 
-                    tokenResponse.on("end", () => {
-                        try {
-                            const jwtToken = JSON.parse(jwtBody);
-                            const token = jwtToken.token;
-                            const expirationDateTime = jwtToken.exp * 1000;
-                            nightscoutToken.token = token;
-                            nightscoutToken.expirationDateTime = expirationDateTime;
-                            resolve(nightscoutToken);
-                        } catch (error: any) {
-                            console.error(error.message);
-                            reject(error);
-                        }
-                    });
-                } else {
-                    reject(new Error('Could not get authorization token. Got ' + tokenResponse.statusCode));
-                }
-            }).on("error", (err: any) => {
-            console.error("Error retrieving Nightscout token: " + err.message);
-            reject(err);
-        });
-    });
+    nightscoutToken.token = jwtToken.token;
+    nightscoutToken.expirationDateTime = jwtToken.exp * 1000;
+    return nightscoutToken;
 }
 
 export async function getValidToken(): Promise<NightscoutToken> {
