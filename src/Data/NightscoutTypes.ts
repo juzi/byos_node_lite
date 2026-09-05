@@ -13,7 +13,7 @@ export type NightscoutData = {
     rawEntries: string,
     iob: string,
     battery: string,
-    charging: string,
+    charging: boolean,
     alert: string
 }
 

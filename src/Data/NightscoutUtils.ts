@@ -52,7 +52,7 @@ export function getErrorResponse(message: string): NightscoutData {
         rawEntries: '',
         iob: '',
         battery: '',
-        charging: '',
+        charging: false,
         alert: ''
     };
 }
