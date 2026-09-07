@@ -55,6 +55,18 @@ export function formatAge(hours: number): string {
     return Math.floor(hours / HOURS_PER_DAY) + 'd' + Math.floor(hours % HOURS_PER_DAY) + 'h';
 }
 
+/**
+ * Whether a wearable is inside the last warningHours of its expected life -- or already past it,
+ * since an overdue sensor or pod is exactly what the warning is for. Each wearable passes its own
+ * window. An age that could not be determined does not warn: there is nothing to count down from.
+ */
+export function isExpiring(hours: number, lifetimeHours: number, warningHours: number): boolean {
+    if (hours < 0) {
+        return false;
+    }
+    return lifetimeHours - hours < warningHours;
+}
+
 export function getSummaryErrorResponse(message: string): State {
     return {
         error: message,
@@ -76,6 +88,8 @@ export function getErrorResponse(message: string): NightscoutData {
         charging: false,
         alert: '',
         sensorAge: '?',
-        podAge: '?'
+        podAge: '?',
+        sensorExpiring: false,
+        podExpiring: false
     };
 }

@@ -16,7 +16,9 @@ export type NightscoutData = {
     charging: boolean,
     alert: string,
     sensorAge: string,
-    podAge: string
+    podAge: string,
+    sensorExpiring: boolean,
+    podExpiring: boolean
 }
 
 export type Ages = {

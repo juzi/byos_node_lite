@@ -19,8 +19,9 @@ vi.mock('./NightscoutAuth.js', () => ({
 }));
 
 const {getAges} = await import('./Ages.js');
-const {formatAge} = await import('./NightscoutUtils.js');
-const {UNKNOWN_AGE, MILLISECONDS_PER_HOUR} = await import('./NightscoutConstants.js');
+const {formatAge, isExpiring} = await import('./NightscoutUtils.js');
+const {UNKNOWN_AGE, MILLISECONDS_PER_HOUR, POD_LIFETIME_HOURS, POD_WARNING_HOURS,
+    SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS} = await import('./NightscoutConstants.js');
 
 beforeEach(() => {
     jsonReplies.length = 0;
@@ -107,4 +108,26 @@ test('formatAge', () => {
     expect(formatAge(240)).toBe('10d0h');
     expect(formatAge(0)).toBe('0d0h');
     expect(formatAge(UNKNOWN_AGE)).toBe('?');
+})
+
+test('isExpiring warns the pod inside its last 12h', () => {
+    // A pod lasts 72h with a 12h window. At 60h exactly a full 12h is left, so the warning holds
+    // off until just past that, and stays on once the pod is overdue.
+    expect(isExpiring(48, POD_LIFETIME_HOURS, POD_WARNING_HOURS)).toBe(false);
+    expect(isExpiring(60, POD_LIFETIME_HOURS, POD_WARNING_HOURS)).toBe(false);
+    expect(isExpiring(60.1, POD_LIFETIME_HOURS, POD_WARNING_HOURS)).toBe(true);
+    expect(isExpiring(72, POD_LIFETIME_HOURS, POD_WARNING_HOURS)).toBe(true);
+    expect(isExpiring(96, POD_LIFETIME_HOURS, POD_WARNING_HOURS)).toBe(true);
+})
+
+test('isExpiring warns the sensor inside its last 24h', () => {
+    // A sensor lasts 240h with a 24h window, putting the same boundary at 216h.
+    expect(isExpiring(216, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS)).toBe(false);
+    expect(isExpiring(216.1, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS)).toBe(true);
+    expect(isExpiring(260, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS)).toBe(true);
+})
+
+test('isExpiring stays quiet when the age is unknown', () => {
+    expect(isExpiring(UNKNOWN_AGE, POD_LIFETIME_HOURS, POD_WARNING_HOURS)).toBe(false);
+    expect(isExpiring(UNKNOWN_AGE, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS)).toBe(false);
 })

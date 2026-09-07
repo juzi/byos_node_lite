@@ -112,6 +112,7 @@
 
 - `getTrendArrowSymbol()`: Calculates trend arrows from data
 - `formatAge()`: Renders a fractional-hour age as the `2d10h` the display shows
+- `isExpiring()`: Whether a wearable is inside the last hours of its expected life, or past it
 - Error response builders
 - Shared utility functions
 
@@ -125,6 +126,8 @@
 - Configuration constants
 - Arrow Unicode symbols
 - Age units and the `UNKNOWN_AGE` marker
+- Expected sensor/pod lifetimes and the warning window each one gets (24h for the ten-day sensor,
+  12h for the three-day pod, so the pod warning is a late nudge rather than a third of its life)
 - Shared constants
 
 **smoothing.ts** (95 lines)

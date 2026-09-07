@@ -15,6 +15,17 @@ export const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
 export const HOURS_PER_DAY = 24;
 export const UNKNOWN_AGE = -1;
 
+// How long each wearable is expected to last, and how close to that the display starts warning.
+// Measured from this account's own change history: sensor changes land at 240-255h (a ten-day
+// sensor plus its grace period), pod changes at 59-81h (Omnipod's 72h plus its 8h grace).
+export const SENSOR_LIFETIME_HOURS = 10 * HOURS_PER_DAY;
+export const POD_LIFETIME_HOURS = 3 * HOURS_PER_DAY;
+
+// How much notice each one gets. The windows differ on purpose: a day's notice is a small slice of
+// a ten-day sensor, but on a three-day pod it would keep the warning lit for a third of every pod.
+export const SENSOR_WARNING_HOURS = 24;
+export const POD_WARNING_HOURS = 12;
+
 // Arrow symbols
 export const PLUS_MINUS = '\u00b1'; // Plus-Minus sign
 export const ARROW_FLAT = '\u2192';

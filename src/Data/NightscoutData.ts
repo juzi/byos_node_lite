@@ -1,9 +1,16 @@
 import smoothen from "./smoothing.js";
 import {refreshRate} from "../BYOS/Display.js";
 import {Entry, NightscoutData, NightscoutToken} from './NightscoutTypes.js';
-import {PLUS_MINUS, REFRESH_SECONDS} from './NightscoutConstants.js';
+import {
+    PLUS_MINUS,
+    POD_LIFETIME_HOURS,
+    POD_WARNING_HOURS,
+    REFRESH_SECONDS,
+    SENSOR_LIFETIME_HOURS,
+    SENSOR_WARNING_HOURS
+} from './NightscoutConstants.js';
 import {getValidToken} from './NightscoutAuth.js';
-import {formatAge, getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
+import {formatAge, getErrorResponse, getTrendArrowSymbol, isExpiring} from './NightscoutUtils.js';
 import {getNightscoutJson} from './NightscoutHttp.js';
 import {getDeviceStatus} from './DeviceStatus.js';
 import {getState} from './State.js';
@@ -87,6 +94,8 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
         charging: isCharging,
         alert: alert,
         sensorAge: formatAge(ages.sensorHours),
-        podAge: formatAge(ages.podHours)
+        podAge: formatAge(ages.podHours),
+        sensorExpiring: isExpiring(ages.sensorHours, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS),
+        podExpiring: isExpiring(ages.podHours, POD_LIFETIME_HOURS, POD_WARNING_HOURS)
     };
 }
