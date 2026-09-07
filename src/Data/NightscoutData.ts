@@ -3,7 +3,7 @@ import {refreshRate} from "../BYOS/Display.js";
 import {Entry, NightscoutData, NightscoutToken} from './NightscoutTypes.js';
 import {PLUS_MINUS, REFRESH_SECONDS} from './NightscoutConstants.js';
 import {getValidToken} from './NightscoutAuth.js';
-import {formatAgeInDays, getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
+import {formatAge, getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
 import {getNightscoutJson} from './NightscoutHttp.js';
 import {getDeviceStatus} from './DeviceStatus.js';
 import {getState} from './State.js';
@@ -86,7 +86,7 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
         battery: battery,
         charging: isCharging,
         alert: alert,
-        sensorAge: formatAgeInDays(ages.sensorHours),
-        podAge: formatAgeInDays(ages.podHours)
+        sensorAge: formatAge(ages.sensorHours),
+        podAge: formatAge(ages.podHours)
     };
 }

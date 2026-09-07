@@ -45,14 +45,14 @@ export function getAgesErrorResponse(message: string): Ages {
 }
 
 /**
- * A sensor runs for ten days and a pod for three, so days read better than the hours the age is
- * measured in -- one decimal still resolves the fraction that Nightscout itself rounds away.
+ * Splits an age into whole days and the hours left over, the same way Nightscout splits its own
+ * days/hours fields -- '2d10h' rather than the '2.4d' a single unit would give.
  */
-export function formatAgeInDays(hours: number): string {
+export function formatAge(hours: number): string {
     if (hours < 0) {
         return '?';
     }
-    return (hours / HOURS_PER_DAY).toFixed(1) + 'd';
+    return Math.floor(hours / HOURS_PER_DAY) + 'd' + Math.floor(hours % HOURS_PER_DAY) + 'h';
 }
 
 export function getSummaryErrorResponse(message: string): State {

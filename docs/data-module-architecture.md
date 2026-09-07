@@ -83,8 +83,8 @@
   its `min` field names the current one; a pod change writes a Site Change and an Insulin Change at
   the same instant, so `cage` is the pod's age and `iage` only stands in when the site change is
   missing
-- Ages are reported in fractional hours; `NightscoutUtils.formatAgeInDays()` turns one into the
-  `2.4d` the display shows, and `UNKNOWN_AGE` into `?`
+- Ages are reported in fractional hours; `NightscoutUtils.formatAge()` turns one into the
+  `2d10h` the display shows, and `UNKNOWN_AGE` into `?`
 
 ### Supporting Modules
 
@@ -111,7 +111,7 @@
 **NightscoutUtils.ts** (56 lines)
 
 - `getTrendArrowSymbol()`: Calculates trend arrows from data
-- `formatAgeInDays()`: Renders a fractional-hour age as the `2.4d` the display shows
+- `formatAge()`: Renders a fractional-hour age as the `2d10h` the display shows
 - Error response builders
 - Shared utility functions
 

@@ -31,7 +31,7 @@
         font-size: 100px;
         font-weight: bolder;
         text-align: right;
-	padding-top: 60px;
+        padding-top: 60px;
     }
 
     div.delta {
@@ -47,11 +47,11 @@
         grid-column: 7 / span 2;
         grid-row: 1 / span 2;
         width: 180px;
-        font-size:125px;
+        font-size: 125px;
         font-weight: 500;
-	text-align: left;
+        text-align: left;
         padding-top: 40px;
-	padding-left: 20px;
+        padding-left: 20px;
     }
 
     /* Sensor and pod age, side by side along the top edge above the arrow. The pair is wider than
@@ -82,7 +82,7 @@
         grid-gap: 40px;
         padding-left: 30px;
         padding-right: 30px;
-	padding-top: 10px;
+        padding-top: 30px;
         font-weight: bold;
     }
 
@@ -184,8 +184,8 @@
         grid-column: 5 / span 4;
         grid-row: 3 / span 2;
         width: 380px;
-	height: 260px;
-	padding-top: 10px;
+        height: 260px;
+        padding-top: 30px;
     }
 
     /*canvas {*/
@@ -208,7 +208,8 @@
                 <text>{{ arrow }}</text>
             </div>
             <div class="grid-child ages">
-                <text>S {{ sensorAge }}</text><text>P {{ podAge }}</text>
+                <text>P {{ podAge }}</text>
+                <text>S {{ sensorAge }}</text>
             </div>
 
             <div class="grid-child age-and-battery">

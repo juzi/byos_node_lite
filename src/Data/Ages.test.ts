@@ -19,7 +19,7 @@ vi.mock('./NightscoutAuth.js', () => ({
 }));
 
 const {getAges} = await import('./Ages.js');
-const {formatAgeInDays} = await import('./NightscoutUtils.js');
+const {formatAge} = await import('./NightscoutUtils.js');
 const {UNKNOWN_AGE, MILLISECONDS_PER_HOUR} = await import('./NightscoutConstants.js');
 
 beforeEach(() => {
@@ -100,9 +100,11 @@ test('reports an unknown age when the request fails', async () => {
     expect(ages.podHours).toBe(UNKNOWN_AGE);
 })
 
-test('formatAgeInDays', () => {
-    expect(formatAgeInDays(58.5)).toBe('2.4d');
-    expect(formatAgeInDays(9.25)).toBe('0.4d');
-    expect(formatAgeInDays(0)).toBe('0.0d');
-    expect(formatAgeInDays(UNKNOWN_AGE)).toBe('?');
+test('formatAge', () => {
+    expect(formatAge(58.5)).toBe('2d10h');
+    expect(formatAge(9.25)).toBe('0d9h');
+    expect(formatAge(23.99)).toBe('0d23h');
+    expect(formatAge(240)).toBe('10d0h');
+    expect(formatAge(0)).toBe('0d0h');
+    expect(formatAge(UNKNOWN_AGE)).toBe('?');
 })
