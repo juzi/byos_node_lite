@@ -3,17 +3,19 @@ import {refreshRate} from "../BYOS/Display.js";
 import {Entry, NightscoutData, NightscoutToken} from './NightscoutTypes.js';
 import {PLUS_MINUS, REFRESH_SECONDS} from './NightscoutConstants.js';
 import {getValidToken} from './NightscoutAuth.js';
-import {getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
+import {formatAgeInDays, getErrorResponse, getTrendArrowSymbol} from './NightscoutUtils.js';
 import {getNightscoutJson} from './NightscoutHttp.js';
 import {getDeviceStatus} from './DeviceStatus.js';
 import {getState} from './State.js';
+import {getAges} from './Ages.js';
 
 // Re-export types for backward compatibility
-export type {NightscoutData, NightscoutToken, Entry, DeviceStatus, State} from './NightscoutTypes.js';
+export type {NightscoutData, NightscoutToken, Entry, DeviceStatus, State, Ages} from './NightscoutTypes.js';
 
 // Re-export functions for backward compatibility
 export {getDeviceStatus} from './DeviceStatus.js';
 export {getState} from './State.js';
+export {getAges} from './Ages.js';
 
 export async function getNightscoutData(): Promise<NightscoutData> {
     try {
@@ -66,7 +68,7 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
     }
     refreshRate.seconds = refreshSeconds;
 
-    const [state, deviceStatus] = await Promise.all([getState(), getDeviceStatus()]);
+    const [state, deviceStatus, ages] = await Promise.all([getState(), getDeviceStatus(), getAges()]);
     const battery: string = deviceStatus.error ? '' : deviceStatus.battery.toString();
     const isCharging: boolean = deviceStatus.isCharging;
     const alert: string = (deviceStatus.battery < 15) ? 'alert' : '';
@@ -83,6 +85,8 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
         iob: iob,
         battery: battery,
         charging: isCharging,
-        alert: alert
+        alert: alert,
+        sensorAge: formatAgeInDays(ages.sensorHours),
+        podAge: formatAgeInDays(ages.podHours)
     };
 }

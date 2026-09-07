@@ -1,4 +1,4 @@
-import {DeviceStatus, Entry, NightscoutData, State} from './NightscoutTypes.js';
+import {Ages, DeviceStatus, Entry, NightscoutData, State} from './NightscoutTypes.js';
 import {
     ARROW_DOUBLE_DOWN,
     ARROW_DOUBLE_UP,
@@ -7,7 +7,9 @@ import {
     ARROW_FORTYFIVE_UP,
     ARROW_NONE,
     ARROW_SINGLE_DOWN,
-    ARROW_SINGLE_UP
+    ARROW_SINGLE_UP,
+    HOURS_PER_DAY,
+    UNKNOWN_AGE
 } from './NightscoutConstants.js';
 
 export function getTrendArrowSymbol(current: Entry, previous: Entry): string {
@@ -34,6 +36,25 @@ export function getStatusErrorResponse(message: string): DeviceStatus {
     };
 }
 
+export function getAgesErrorResponse(message: string): Ages {
+    return {
+        error: message,
+        sensorHours: UNKNOWN_AGE,
+        podHours: UNKNOWN_AGE
+    };
+}
+
+/**
+ * A sensor runs for ten days and a pod for three, so days read better than the hours the age is
+ * measured in -- one decimal still resolves the fraction that Nightscout itself rounds away.
+ */
+export function formatAgeInDays(hours: number): string {
+    if (hours < 0) {
+        return '?';
+    }
+    return (hours / HOURS_PER_DAY).toFixed(1) + 'd';
+}
+
 export function getSummaryErrorResponse(message: string): State {
     return {
         error: message,
@@ -53,6 +74,8 @@ export function getErrorResponse(message: string): NightscoutData {
         iob: '',
         battery: '',
         charging: false,
-        alert: ''
+        alert: '',
+        sensorAge: '?',
+        podAge: '?'
     };
 }

@@ -16,14 +16,14 @@
                 └────────────────────────┘
                              │
                              │ uses
-         ┌───────────────────┼───────────────────┐
-         ▼                   ▼                   ▼
-┌─────────────────┐  ┌──────────────┐  ┌──────────────┐
-│ DeviceStatus.ts │  │  State.ts  │  │smoothing.ts  │
-│- getDeviceStatus│  │- getSummary()│  │- smoothen()  │
-└────────┬────────┘  └──────┬───────┘  └──────┬───────┘
-         │                  │                  │
-         └──────────────────┼──────────────────┘
+        ┌─────────────────┬──┴───────────┬────────────────┐
+        ▼                 ▼              ▼                ▼
+┌─────────────────┐ ┌────────────┐ ┌─────────────┐ ┌──────────────┐
+│ DeviceStatus.ts │ │  State.ts  │ │   Ages.ts   │ │ smoothing.ts │
+│- getDeviceStatus│ │- getState()│ │- getAges()  │ │- smoothen()  │
+└───────┬─────────┘ └─────┬──────┘ └─────┬───────┘ └──────┬───────┘
+        │                 │              │                │
+        └─────────────────┴─┬────────────┴────────────────┘
                             │ uses
          ┌──────────────────┼──────────────────┐
          ▼                  ▼                   ▼
@@ -60,7 +60,7 @@
 
 - Primary data fetching function: `getNightscoutData()`
 - Fetches glucose entries and computes derived values
-- Orchestrates calls to DeviceStatus and Summary
+- Orchestrates calls to DeviceStatus, State and Ages
 - Re-exports all types and functions for backward compatibility
 
 **DeviceStatus.ts** (63 lines)
@@ -70,8 +70,21 @@
 
 **State.ts** (63 lines)
 
-- `getSummary()`: Fetches IOB (Insulin On Board) data
+- `getState()`: Fetches IOB (Insulin On Board) data
 - Self-contained module for summary data
+
+**Ages.ts**
+
+- `getAges()`: Fetches how long the current CGM sensor and the current Omnipod have been in use
+- Reads Nightscout's own `sage`/`cage`/`iage` properties, asking for the three by name so the
+  response stays small instead of carrying the whole loop prediction along
+- Nightscout pre-rounds those to whole hours, so the fractional age is derived from the
+  `treatmentDate` it reports beside them. `sage` is keyed by the event that started the sensor and
+  its `min` field names the current one; a pod change writes a Site Change and an Insulin Change at
+  the same instant, so `cage` is the pod's age and `iage` only stands in when the site change is
+  missing
+- Ages are reported in fractional hours; `NightscoutUtils.formatAgeInDays()` turns one into the
+  `2.4d` the display shows, and `UNKNOWN_AGE` into `?`
 
 ### Supporting Modules
 
@@ -98,6 +111,7 @@
 **NightscoutUtils.ts** (56 lines)
 
 - `getTrendArrowSymbol()`: Calculates trend arrows from data
+- `formatAgeInDays()`: Renders a fractional-hour age as the `2.4d` the display shows
 - Error response builders
 - Shared utility functions
 
@@ -110,6 +124,7 @@
 
 - Configuration constants
 - Arrow Unicode symbols
+- Age units and the `UNKNOWN_AGE` marker
 - Shared constants
 
 **smoothing.ts** (95 lines)
@@ -125,7 +140,7 @@
 3. **Fetch entries** → Makes HTTPS request to Nightscout API
 4. **Smooth data** → `smoothen()` processes raw glucose values
 5. **Calculate metrics** → Trend arrows, deltas, age
-6. **Fetch supplementary** → `getDeviceStatus()` and `getSummary()` in parallel
+6. **Fetch supplementary** → `getDeviceStatus()`, `getState()` and `getAges()` in parallel
 7. **Return combined result** → Complete NightscoutData object
 
 ## Benefits of New Structure
@@ -172,7 +187,8 @@ import { getNightscoutData, NightscoutData } from './Data/NightscoutData.js';
 
 ```typescript
 import { getDeviceStatus } from './Data/DeviceStatus.js';
-import { getSummary } from './Data/Summary.js';
+import { getState } from './Data/State.js';
+import { getAges } from './Data/Ages.js';
 import type { NightscoutData, Entry } from './Data/NightscoutTypes.js';
 ```
 

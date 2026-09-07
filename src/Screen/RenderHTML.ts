@@ -30,7 +30,9 @@ export async function initPuppeteer() {
     console.log('LiberationSans available:', fonts);
     await page.setViewport({width: 800, height: 480});
     await page.setRequestInterception(true);
-    page.on('pageerror', ({message}) => console.error('error:', message));
+    // A page can throw a value that is not an Error, so puppeteer hands this over as unknown.
+    page.on('pageerror', (error: unknown) =>
+        console.error('error:', error instanceof Error ? error.message : error));
     page.on('requestfailed', request => console.log(`Failed: ${request.failure()?.errorText} ${request.url()}`));
     // page.on('console', message => console.log('console: ', message.text()));
     page.on('request', async (interceptedRequest) => {

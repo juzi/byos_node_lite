@@ -14,7 +14,17 @@ export type NightscoutData = {
     iob: string,
     battery: string,
     charging: boolean,
-    alert: string
+    alert: string,
+    sensorAge: string,
+    podAge: string
+}
+
+export type Ages = {
+    error: string;
+    // Fractional hours since the last sensor change and the last pod change, UNKNOWN_AGE when
+    // Nightscout has no treatment to derive one from.
+    sensorHours: number;
+    podHours: number;
 }
 
 export type DeviceStatus = {

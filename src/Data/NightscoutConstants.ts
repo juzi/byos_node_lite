@@ -9,6 +9,12 @@ export const REQUEST_TIMEOUT_MS = 10000;
 export const ADDRESS_FALLBACK_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 export const RESPONSE_FALLBACK_MAX_AGE_MS = 15 * 60 * 1000;
 
+// Sensor and pod age. Nightscout pre-rounds its own age fields to whole hours, so the fractional
+// age is derived from the treatment timestamp it reports alongside them.
+export const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
+export const HOURS_PER_DAY = 24;
+export const UNKNOWN_AGE = -1;
+
 // Arrow symbols
 export const PLUS_MINUS = '\u00b1'; // Plus-Minus sign
 export const ARROW_FLAT = '\u2192';
