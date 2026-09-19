@@ -89,6 +89,8 @@ export function getErrorResponse(message: string): NightscoutData {
         alert: '',
         sensorAge: '?',
         podAge: '?',
+        sensorHours: UNKNOWN_AGE,
+        podHours: UNKNOWN_AGE,
         sensorExpiring: false,
         podExpiring: false
     };

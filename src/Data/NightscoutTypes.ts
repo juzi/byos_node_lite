@@ -17,6 +17,11 @@ export type NightscoutData = {
     alert: string,
     sensorAge: string,
     podAge: string,
+    // The same two ages unrounded, kept alongside the formatted strings so a consumer that wants to
+    // count down to the next change does not have to parse '2d10h' back apart. UNKNOWN_AGE when
+    // Nightscout had no treatment to derive one from.
+    sensorHours: number,
+    podHours: number,
     sensorExpiring: boolean,
     podExpiring: boolean
 }

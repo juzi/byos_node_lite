@@ -10,7 +10,9 @@ import {
 } from "Config.js";
 import {buildScreen, checkImageUrl, getScreenHash} from "Screen/Screen.js";
 import {BYOSRoutes} from "BYOS/BYOSRoutes.js";
-import {ROUTE_IMAGE, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
+import {ROUTE_IMAGE, ROUTE_PANEL, ROUTE_PANEL_PNG, ROUTE_PANEL_RAW, ROUTE_PLUGIN_REDIRECT} from "Routes.js";
+import {getPanelData} from "Data/PanelData.js";
+import {buildPanelPng, buildPanelRgb565} from "Screen/PanelScreen.js";
 import {initPuppeteer} from "./Screen/RenderHTML.js";
 
 export const app = express();
@@ -53,6 +55,48 @@ app.get(ROUTE_IMAGE, async (req: Request, res: Response) => {
     const image1bit = await buildScreen();
     res.setHeader('Content-Type', 'image/bmp');
     res.send(image1bit);
+})
+
+/**
+ * What the CrowPanel screen is built from, as JSON. Not used by the panel itself -- it is here to
+ * check what the server thinks the numbers are without having to read them off a photograph.
+ */
+app.get(ROUTE_PANEL, async (req: Request, res: Response) => {
+    if (!isSecretKeyValid(req, res)) {
+        return;
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    res.json(await getPanelData());
+})
+
+/**
+ * The panel screen as a PNG, for looking at the layout in a browser while editing CrowPanel.liquid.
+ * Iterating on the design costs a reload here rather than a reflash of the device.
+ */
+app.get(ROUTE_PANEL_PNG, async (req: Request, res: Response) => {
+    if (!isSecretKeyValid(req, res)) {
+        return;
+    }
+    const panel = await buildPanelPng();
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'no-store');
+    res.send(panel.data);
+})
+
+/**
+ * What the panel actually fetches: raw little-endian RGB565, straight into its canvas buffer. The
+ * refresh interval rides along in a header so one request answers both 'what do I draw' and 'when
+ * do I come back'.
+ */
+app.get(ROUTE_PANEL_RAW, async (req: Request, res: Response) => {
+    if (!isSecretKeyValid(req, res)) {
+        return;
+    }
+    const panel = await buildPanelRgb565();
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Refresh-Seconds', String(panel.refreshSeconds));
+    res.send(panel.data);
 })
 
 app.use((req: Request, res: Response) => {

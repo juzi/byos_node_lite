@@ -95,6 +95,8 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
         alert: alert,
         sensorAge: formatAge(ages.sensorHours),
         podAge: formatAge(ages.podHours),
+        sensorHours: ages.sensorHours,
+        podHours: ages.podHours,
         sensorExpiring: isExpiring(ages.sensorHours, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS),
         podExpiring: isExpiring(ages.podHours, POD_LIFETIME_HOURS, POD_WARNING_HOURS)
     };

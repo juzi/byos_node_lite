@@ -1,4 +1,7 @@
 export const ROUTE_IMAGE = '/image';
+export const ROUTE_PANEL = '/panel';
+export const ROUTE_PANEL_PNG = '/panel.png';
+export const ROUTE_PANEL_RAW = '/panel.rgb565';
 export const ROUTE_PLUGIN_REDIRECT = '/plugin/redirect';
 export const ROUTE_BYOS_SETUP = '/api/setup';
 export const ROUTE_BYOS_DISPLAY = '/api/display';
