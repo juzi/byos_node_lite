@@ -4,12 +4,22 @@ import {ASSETS_FOLDER, IS_TEST_ENV} from "Config.js";
 
 export const BASE_URL_CHROME = 'http://localhost';
 
+/**
+ * A single CDP call may take this long. It has to cover a screenshot on a loaded machine, so it is
+ * generously above what a render costs -- but it stays bounded, because a wedged Chrome must fail
+ * the request rather than hold it open forever. A failure is recovered from, see withFreshBrowser.
+ */
+const PROTOCOL_TIMEOUT_MS = 20_000;
+
+/** Renders per page before it is thrown away. At one screen a minute that is half a day. */
+const RENDERS_PER_PAGE = 720;
 
 let browser: Browser | null = null;
 let page: Page | null = null;
 let colorPage: Page | null = null;
 let count: number = 0;
 let colorCount: number = 0;
+let queue: Promise<unknown> = Promise.resolve();
 
 /**
  * Serves /assets/ out of the local folder and lets everything else through. Both the TRMNL page and
@@ -40,14 +50,39 @@ async function interceptAssets(target: Page) {
     });
 }
 
+/**
+ * Drops Chrome and everything pointing into it. Every path that wants a new browser goes through
+ * here first: launching on top of a running browser used to leak the old process, and those
+ * leftovers were what eventually starved the machine into screenshot timeouts.
+ */
+export async function closeBrowser() {
+    const dying = browser;
+    browser = null;
+    page = null;
+    colorPage = null;
+    count = 0;
+    colorCount = 0;
+    if (!dying) {
+        return;
+    }
+    try {
+        await dying.close();
+    } catch (error) {
+        // A browser that no longer answers CDP cannot be asked to leave politely.
+        console.error('Could not close Chrome cleanly:', error instanceof Error ? error.message : error);
+        dying.process()?.kill('SIGKILL');
+    }
+}
+
 export async function initPuppeteer() {
     if (!IS_TEST_ENV) {
         console.log('start of Puppeteer init');
     }
-    browser = await puppeteer.launch({
+    await closeBrowser();
+    const launched = await puppeteer.launch({
             headless: true,
-            protocolTimeout: 5000,
-            timeout: 5000,
+            protocolTimeout: PROTOCOL_TIMEOUT_MS,
+            timeout: PROTOCOL_TIMEOUT_MS,
             args: [
                 '--no-sandbox',
                 '--disable-web-security',
@@ -55,7 +90,17 @@ export async function initPuppeteer() {
             ]
         }
     );
-    page = await browser.newPage();
+    browser = launched;
+    // If Chrome dies on its own, forget it here too, so the next render launches a fresh one
+    // instead of talking to a socket nobody is listening on.
+    launched.on('disconnected', () => {
+        if (browser === launched) {
+            browser = null;
+            page = null;
+            colorPage = null;
+        }
+    });
+    page = await launched.newPage();
     const fonts = await page.evaluate(() => {
         return document.fonts.check('12px LiberationSans');
     });
@@ -69,7 +114,7 @@ export async function initPuppeteer() {
 
 
 async function getPage(): Promise<Page> {
-    if (!page) {
+    if (!page || page.isClosed()) {
         await initPuppeteer();
     }
     if (!page) {
@@ -98,26 +143,53 @@ async function getColorPage(width: number, height: number): Promise<Page> {
     return colorPage;
 }
 
+/**
+ * One render at a time. A page holds a single document, so two overlapping requests -- the panel
+ * and the TRMNL screen both coming due, or a browser reload landing on top of the device -- would
+ * otherwise screenshot each other's content.
+ */
+function serialized<T>(work: () => Promise<T>): Promise<T> {
+    const result = queue.then(work, work);
+    queue = result.catch(() => undefined);
+    return result;
+}
 
-export async function renderToImage(html: string) {
-    count++;
-    if (count > 720) {
-       page = null;
-       await initPuppeteer();
-       count = 0;
+/**
+ * Retries once on a brand-new browser. A Chrome that has timed out once keeps timing out: the old
+ * code left the broken page in place, so every following request failed too and the screen stayed
+ * stuck until someone restarted the service by hand.
+ */
+async function withFreshBrowser<T>(work: () => Promise<T>): Promise<T> {
+    try {
+        return await work();
+    } catch (error) {
+        console.error('Render failed, restarting Chrome:', error instanceof Error ? error.message : error);
+        await closeBrowser();
+        return await work();
     }
-    const currentPage = await getPage();
-    await currentPage.addStyleTag({
-        content: `
+}
+
+export async function renderToImage(html: string): Promise<Buffer> {
+    return serialized(() => withFreshBrowser(async () => {
+        count++;
+        if (count > RENDERS_PER_PAGE) {
+            await closeBrowser();
+        }
+        const currentPage = await getPage();
+        await currentPage.addStyleTag({
+            content: `
     * {
       filter: grayscale(100%) contrast(1000%) brightness(100%);
       -webkit-filter: grayscale(100%) contrast(1000%) brightness(100%);
     }
     `
-    });
-    await currentPage.setContent(html, {waitUntil: "domcontentloaded"});
-    const image: Uint8Array = await currentPage.screenshot();
-    return Buffer.from(image);
+        });
+        await currentPage.setContent(html, {waitUntil: "domcontentloaded"});
+        // Chrome only paints the frontmost page, and the panel page may have taken that spot.
+        await currentPage.bringToFront();
+        const image: Uint8Array = await currentPage.screenshot();
+        return Buffer.from(image);
+    }));
 }
 
 /**
@@ -125,19 +197,22 @@ export async function renderToImage(html: string) {
  * long-lived Chrome page leaks, and this one runs for months at a time.
  */
 export async function renderColorToImage(html: string, width: number, height: number): Promise<Buffer> {
-    colorCount++;
-    if (colorCount > 720) {
-        if (colorPage && !colorPage.isClosed()) {
-            await colorPage.close();
+    return serialized(() => withFreshBrowser(async () => {
+        colorCount++;
+        if (colorCount > RENDERS_PER_PAGE) {
+            if (colorPage && !colorPage.isClosed()) {
+                await colorPage.close();
+            }
+            colorPage = null;
+            colorCount = 0;
         }
-        colorPage = null;
-        colorCount = 0;
-    }
-    const currentPage = await getColorPage(width, height);
-    await currentPage.setContent(html, {waitUntil: "domcontentloaded"});
-    const image: Uint8Array = await currentPage.screenshot({
-        clip: {x: 0, y: 0, width: width, height: height},
-        omitBackground: false
-    });
-    return Buffer.from(image);
+        const currentPage = await getColorPage(width, height);
+        await currentPage.setContent(html, {waitUntil: "domcontentloaded"});
+        await currentPage.bringToFront();
+        const image: Uint8Array = await currentPage.screenshot({
+            clip: {x: 0, y: 0, width: width, height: height},
+            omitBackground: false
+        });
+        return Buffer.from(image);
+    }));
 }
