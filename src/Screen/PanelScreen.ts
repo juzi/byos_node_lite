@@ -13,9 +13,10 @@ const PANEL_TEMPLATE = 'CrowPanel';
 
 export type PanelImage = {
     data: Buffer;
-    // Passed to the panel in a response header so one request carries both the picture and when to
-    // come back for the next one.
+    // Passed to the panel in response headers, so one request carries the picture, when to come
+    // back for the next one, and whether to be dark in the meantime.
     refreshSeconds: number;
+    sleeping: boolean;
 }
 
 /** The panel screen as PNG. Used for previewing the layout in a browser while editing the template. */
@@ -23,15 +24,15 @@ export async function buildPanelPng(): Promise<PanelImage> {
     const data = await getPanelData();
     const html = await buildLiquidPanel(PANEL_TEMPLATE, data);
     const png = await renderColorToImage(html, PANEL_WIDTH, PANEL_HEIGHT);
-    return {data: png, refreshSeconds: data.refreshSeconds};
+    return {data: png, refreshSeconds: data.refreshSeconds, sleeping: data.sleeping};
 }
 
 /**
  * The panel screen as raw little-endian RGB565, which is exactly what the panel's LVGL canvas holds.
  *
  * Sending pixels rather than a PNG or JPEG means the firmware needs no decoder at all -- it reads
- * the body straight into the canvas buffer. At 1.2 MB once every five minutes on a LAN, the
- * bandwidth costs nothing and buys the device an entire missing dependency.
+ * the body straight into the canvas buffer. At 1.2 MB a minute on a LAN -- and far less overnight, while the panel is
+ * dark -- the bandwidth costs nothing and buys the device an entire missing dependency.
  */
 export async function buildPanelRgb565(): Promise<PanelImage> {
     const png = await buildPanelPng();
@@ -45,7 +46,7 @@ export async function buildPanelRgb565(): Promise<PanelImage> {
             + ' instead of ' + PANEL_WIDTH + 'x' + PANEL_HEIGHT);
     }
 
-    return {data: packRgb565(data), refreshSeconds: png.refreshSeconds};
+    return {data: packRgb565(data), refreshSeconds: png.refreshSeconds, sleeping: png.sleeping};
 }
 
 /**

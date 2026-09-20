@@ -1,5 +1,6 @@
 import {getNightscoutData} from './NightscoutData.js';
 import {refreshRate} from '../BYOS/Display.js';
+import {TIMEZONE} from '../Config.js';
 import {
     ARROW_DOUBLE_DOWN,
     ARROW_DOUBLE_UP,
@@ -20,6 +21,17 @@ export const LOW_MG_DL = 70;
 export const HIGH_MG_DL = 180;
 export const URGENT_LOW_MG_DL = 55;
 export const URGENT_HIGH_MG_DL = 250;
+
+// The panel is dark between these hours, local time. The schedule lives here rather than in the
+// firmware because this is the only side that knows the wall clock and the timezone -- the panel
+// has no RTC, and doing it here means DST is somebody else's problem.
+export const SLEEP_FROM_HOUR = 11;
+export const SLEEP_UNTIL_HOUR = 6;
+
+// How often to check back while dark. Rare enough that a night costs a handful of fetches instead
+// of several hundred, frequent enough that waking is punctual: the last poll before the boundary
+// asks for exactly the seconds remaining, so the screen comes back within seconds of the hour.
+export const SLEEP_POLL_SECONDS = 300;
 
 // A CGM reports every five minutes. Past six, one has been missed -- not yet alarming, but enough
 // that the number on screen should stop presenting itself as current.
@@ -67,6 +79,9 @@ export type PanelData = {
     // When the consumer should come back. getNightscoutData has already re-synced this to the CGM's
     // own five-minute cadence, so the panel inherits that instead of polling blindly.
     refreshSeconds: number;
+    // Whether the panel should be dark right now. It still polls while asleep, slowly, which is
+    // how it learns when to wake.
+    sleeping: boolean;
     serverTime: number;
 }
 
@@ -91,6 +106,10 @@ const TREND_BY_ARROW: Record<string, PanelTrend> = {
 export async function getPanelData(): Promise<PanelData> {
     const data = await getNightscoutData();
 
+    const now = new Date();
+    const secondsOfDay = localSecondsOfDay(now);
+    const sleeping = isSleeping(secondsOfDay);
+
     const sensorRemainingHours = getRemainingHours(data.sensorHours, SENSOR_LIFETIME_HOURS);
     const podRemainingHours = getRemainingHours(data.podHours, POD_LIFETIME_HOURS);
 
@@ -111,9 +130,48 @@ export async function getPanelData(): Promise<PanelData> {
         sensorExpiring: data.sensorExpiring,
         podExpiring: data.podExpiring,
         // Read after getNightscoutData, which is what updates it.
-        refreshSeconds: refreshRate.seconds,
-        serverTime: Math.floor(Date.now() / 1000)
+        refreshSeconds: sleeping ? sleepPollSeconds(secondsOfDay) : refreshRate.seconds,
+        sleeping: sleeping,
+        serverTime: Math.floor(now.getTime() / 1000)
     };
+}
+
+const SECONDS_PER_DAY = 24 * 60 * 60;
+
+/**
+ * Seconds since local midnight, via Intl rather than arithmetic on a UTC offset, so that the two
+ * days a year when the offset changes need no special handling.
+ */
+function localSecondsOfDay(now: Date): number {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: TIMEZONE,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+    }).formatToParts(now);
+
+    const value = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+    return value('hour') * 3600 + value('minute') * 60 + value('second');
+}
+
+/** The window wraps midnight, so this is a union rather than a range. */
+function isSleeping(secondsOfDay: number): boolean {
+    const from = SLEEP_FROM_HOUR * 3600;
+    const until = SLEEP_UNTIL_HOUR * 3600;
+    return secondsOfDay >= from || secondsOfDay < until;
+}
+
+/**
+ * While dark, come back either at the usual slow cadence or exactly when the window ends,
+ * whichever is sooner. The 'whichever is sooner' half is what makes waking punctual.
+ */
+function sleepPollSeconds(secondsOfDay: number): number {
+    let untilWake = SLEEP_UNTIL_HOUR * 3600 - secondsOfDay;
+    if (untilWake <= 0) {
+        untilWake += SECONDS_PER_DAY;
+    }
+    return Math.max(10, Math.min(untilWake, SLEEP_POLL_SECONDS));
 }
 
 function getBand(error: string, sugar: number): PanelBand {

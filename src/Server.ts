@@ -96,6 +96,7 @@ app.get(ROUTE_PANEL_RAW, async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Refresh-Seconds', String(panel.refreshSeconds));
+    res.setHeader('X-Sleep', panel.sleeping ? '1' : '0');
     res.send(panel.data);
 })
 

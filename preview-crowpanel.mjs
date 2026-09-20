@@ -28,7 +28,7 @@ const base = {
     sensorRemainingHours: 177, podRemainingHours: 9,
     sensorRemaining: '7d 9h', podRemaining: '0d 9h',
     sensorExpiring: false, podExpiring: true,
-    refreshSeconds: 60, serverTime: 1758268800,
+    refreshSeconds: 60, sleeping: false, serverTime: 1758268800,
 };
 
 const cases = {
