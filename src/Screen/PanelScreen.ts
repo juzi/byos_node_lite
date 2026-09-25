@@ -14,9 +14,10 @@ const PANEL_TEMPLATE = 'CrowPanel';
 export type PanelImage = {
     data: Buffer;
     // Passed to the panel in response headers, so one request carries the picture, when to come
-    // back for the next one, and whether to be dark in the meantime.
+    // back for the next one, whether to be dark in the meantime, and whether to sound the alarm.
     refreshSeconds: number;
     sleeping: boolean;
+    alarm: boolean;
 }
 
 /** The panel screen as PNG. Used for previewing the layout in a browser while editing the template. */
@@ -24,7 +25,7 @@ export async function buildPanelPng(): Promise<PanelImage> {
     const data = await getPanelData();
     const html = await buildLiquidPanel(PANEL_TEMPLATE, data);
     const png = await renderColorToImage(html, PANEL_WIDTH, PANEL_HEIGHT);
-    return {data: png, refreshSeconds: data.refreshSeconds, sleeping: data.sleeping};
+    return {data: png, refreshSeconds: data.refreshSeconds, sleeping: data.sleeping, alarm: data.alarm};
 }
 
 /**
@@ -46,7 +47,12 @@ export async function buildPanelRgb565(): Promise<PanelImage> {
             + ' instead of ' + PANEL_WIDTH + 'x' + PANEL_HEIGHT);
     }
 
-    return {data: packRgb565(data), refreshSeconds: png.refreshSeconds, sleeping: png.sleeping};
+    return {
+        data: packRgb565(data),
+        refreshSeconds: png.refreshSeconds,
+        sleeping: png.sleeping,
+        alarm: png.alarm
+    };
 }
 
 /**

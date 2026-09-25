@@ -23,7 +23,12 @@ export type NightscoutData = {
     sensorHours: number,
     podHours: number,
     sensorExpiring: boolean,
-    podExpiring: boolean
+    podExpiring: boolean,
+    // Insulin remaining in the pod's reservoir, in units, straight from the pump's own devicestatus
+    // report. null when Nightscout has no pump status yet, or when the driver has only reported a
+    // non-numeric reading -- Omnipod, for one, reports '50+' until the level is low enough to read
+    // precisely, which is always well above where the low-insulin alarm lives.
+    podInsulinUnits: number | null
 }
 
 export type Ages = {
@@ -38,6 +43,8 @@ export type DeviceStatus = {
     error: string;
     battery: number;
     isCharging: boolean;
+    // See NightscoutData.podInsulinUnits -- this is where it comes from.
+    reservoirUnits: number | null;
 }
 
 export type Entry = {

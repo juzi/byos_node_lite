@@ -32,7 +32,8 @@ export function getStatusErrorResponse(message: string): DeviceStatus {
     return {
         error: message,
         battery: -1,
-        isCharging: false
+        isCharging: false,
+        reservoirUnits: null
     };
 }
 
@@ -92,6 +93,7 @@ export function getErrorResponse(message: string): NightscoutData {
         sensorHours: UNKNOWN_AGE,
         podHours: UNKNOWN_AGE,
         sensorExpiring: false,
-        podExpiring: false
+        podExpiring: false,
+        podInsulinUnits: null
     };
 }

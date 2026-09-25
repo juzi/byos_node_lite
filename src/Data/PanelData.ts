@@ -41,6 +41,21 @@ export const AGE_WARNING_MINUTES = 6;
 // so is worse than a panel showing nothing.
 export const STALE_MINUTES = 15;
 
+// Below this many units, the pod is close enough to empty that missing a change matters. A round
+// number with real margin: at a typical basal rate this is still hours of insulin, not minutes, so
+// there is time to act on the alarm rather than a slim chance of catching it. Also what turns the
+// POD card red, independently of the alarm -- see podInsulinLow below.
+export const POD_INSULIN_ALARM_UNITS = 10;
+
+// The alarm is allowed to sound only in this window, local time -- not for as long as the pod stays
+// low. The firmware sounds it once, on the rising edge of the flag this window produces, so a pod
+// that never gets changed alarms again every following morning rather than once a minute all day.
+// The window is a few minutes wide rather than a single instant so a panel that is mid-poll, briefly
+// offline, or just booting right at the hour still catches the transition on its next fetch or two
+// instead of sleeping through the day's only chance.
+export const POD_INSULIN_ALARM_HOUR = 7;
+export const POD_INSULIN_ALARM_WINDOW_MINUTES = 15;
+
 /**
  * The trend as a name rather than a glyph, so the template can pick an arrow to draw instead of
  * depending on the render container having a font with arrows in it.
@@ -76,12 +91,33 @@ export type PanelData = {
     podRemaining: string;
     sensorExpiring: boolean;
     podExpiring: boolean;
+    // Insulin remaining in the pod, in units, straight from the pump's own status report. null when
+    // Nightscout has no pump status to read it from. Kept alongside the formatted string for the
+    // same reason podRemainingHours is kept alongside podRemaining: /panel (the JSON debug view)
+    // shows the number a consumer would otherwise have to parse back out of '8 U'.
+    podInsulinUnits: number | null;
+    // Formatted for the card: '42 U', or '--' when unknown. Rounded to one decimal rather than a
+    // whole unit, because near the alarm threshold a tenth of a unit is exactly the kind of thing
+    // worth not rounding away.
+    podInsulin: string;
+    // True whenever the reading is below POD_INSULIN_ALARM_UNITS, regardless of time of day -- this
+    // is what colours the card, and it is deliberately not the same flag as 'alarm' below. The card
+    // should read as a warning for as long as the pod is actually low; the alarm should only sound
+    // once a day. isPodInsulinAlarm gates this same low reading by the clock to get that second,
+    // narrower flag.
+    podInsulinLow: boolean;
     // When the consumer should come back. getNightscoutData has already re-synced this to the CGM's
     // own five-minute cadence, so the panel inherits that instead of polling blindly.
     refreshSeconds: number;
     // Whether the panel should be dark right now. It still polls while asleep, slowly, which is
-    // how it learns when to wake.
+    // how it learns when to wake. Forced false whenever podInsulinLow is true, regardless of the
+    // clock -- a pod worth alarming about is worth being able to see, and a dark panel overnight
+    // would hide both the reading and the reason the alarm went off.
     sleeping: boolean;
+    // Whether the panel should sound the low-insulin alarm right now. True for a short window once a
+    // day at most -- see POD_INSULIN_ALARM_HOUR -- so the firmware can treat this as an edge rather
+    // than a level and still only beep once per occurrence.
+    alarm: boolean;
     serverTime: number;
 }
 
@@ -108,7 +144,11 @@ export async function getPanelData(): Promise<PanelData> {
 
     const now = new Date();
     const secondsOfDay = localSecondsOfDay(now);
-    const sleeping = isSleeping(secondsOfDay);
+    const podInsulinLow = isPodInsulinLow(data.podInsulinUnits);
+    // The dark schedule loses to a genuinely low pod: someone woken by, or checking on, the alarm
+    // needs to be able to read the screen, and the reading needs to stay on the normal (not the
+    // slow overnight) refresh cadence too -- see the refreshSeconds line below.
+    const sleeping = isSleeping(secondsOfDay) && !podInsulinLow;
 
     const sensorRemainingHours = getRemainingHours(data.sensorHours, SENSOR_LIFETIME_HOURS);
     const podRemainingHours = getRemainingHours(data.podHours, POD_LIFETIME_HOURS);
@@ -129,9 +169,13 @@ export async function getPanelData(): Promise<PanelData> {
         podRemaining: formatRemaining(podRemainingHours),
         sensorExpiring: data.sensorExpiring,
         podExpiring: data.podExpiring,
+        podInsulinUnits: data.podInsulinUnits,
+        podInsulin: formatInsulinUnits(data.podInsulinUnits),
+        podInsulinLow: podInsulinLow,
         // Read after getNightscoutData, which is what updates it.
         refreshSeconds: sleeping ? sleepPollSeconds(secondsOfDay) : refreshRate.seconds,
         sleeping: sleeping,
+        alarm: podInsulinLow && isWithinAlarmWindow(secondsOfDay),
         serverTime: Math.floor(now.getTime() / 1000)
     };
 }
@@ -172,6 +216,24 @@ function sleepPollSeconds(secondsOfDay: number): number {
         untilWake += SECONDS_PER_DAY;
     }
     return Math.max(10, Math.min(untilWake, SLEEP_POLL_SECONDS));
+}
+
+/** Unknown never counts as low: there is nothing to warn about until there is a reading. */
+function isPodInsulinLow(podInsulinUnits: number | null): boolean {
+    return podInsulinUnits !== null && podInsulinUnits < POD_INSULIN_ALARM_UNITS;
+}
+
+/**
+ * The clock half of the alarm decision. Deliberately separate from isPodInsulinLow: the card is
+ * allowed to stay red all day, but the firmware fires on the rising edge of 'alarm', once per
+ * successful fetch that finds it newly true, so 'true' has to go false again in between for the
+ * next day's true to be an edge at all. Scoping this to a short daily window is what makes the
+ * alarm *recur* every morning until the pod is changed, rather than sound once and never again.
+ */
+function isWithinAlarmWindow(secondsOfDay: number): boolean {
+    const from = POD_INSULIN_ALARM_HOUR * 3600;
+    const until = from + POD_INSULIN_ALARM_WINDOW_MINUTES * 60;
+    return secondsOfDay >= from && secondsOfDay < until;
 }
 
 function getBand(error: string, sugar: number): PanelBand {
@@ -223,4 +285,16 @@ function formatRemaining(remainingHours: number | null): string {
     const days = Math.floor(remainingHours / HOURS_PER_DAY);
     const hours = Math.floor(remainingHours % HOURS_PER_DAY);
     return days + 'd ' + hours + 'h';
+}
+
+/**
+ * '8.4 U' rather than a bare number, and '--' when Nightscout has no pump status to read it from --
+ * the same 'unknown is not zero' distinction formatRemaining makes. One decimal place rather than a
+ * whole unit: near the alarm threshold a tenth of a unit is exactly the kind of thing worth keeping.
+ */
+function formatInsulinUnits(units: number | null): string {
+    if (units === null) {
+        return '--';
+    }
+    return (Math.round(units * 10) / 10) + ' U';
 }

@@ -27,6 +27,26 @@ async function getDeviceStatusWithToken(nightscoutToken: NightscoutToken): Promi
     return {
         error: '',
         battery: statusValues[0].uploaderBattery,
-        isCharging: statusValues[0].isCharging
+        isCharging: statusValues[0].isCharging,
+        reservoirUnits: getReservoirUnits(statusValues[0].pump)
     };
+}
+
+/**
+ * The pump's own devicestatus.pump.reservoir, in units. Reported as a plain number by most drivers,
+ * but Omnipod (via AndroidAPS) reports the string '50+' until the level drops low enough to read
+ * precisely -- which is always well clear of where a low-insulin alarm would trigger. A value in
+ * that shape does not parse to a finite number, and is treated the same as no reading at all rather
+ * than guessed at, since a wrong guess here is worse than an honest "unknown".
+ */
+function getReservoirUnits(pump: any): number | null {
+    const value = pump ? pump.reservoir : undefined;
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : null;
+    }
+    if (typeof value === 'string') {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : null;
+    }
+    return null;
 }

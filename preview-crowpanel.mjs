@@ -28,6 +28,7 @@ const base = {
     sensorRemainingHours: 177, podRemainingHours: 9,
     sensorRemaining: '7d 9h', podRemaining: '0d 9h',
     sensorExpiring: false, podExpiring: true,
+    podInsulin: '42 U', podInsulinLow: false,
     refreshSeconds: 60, sleeping: false, serverTime: 1758268800,
 };
 
@@ -45,16 +46,24 @@ const cases = {
     // this is where the corners get clipped.
     'panel-diagonal': {...base, sugar: 96, band: 'inRange', trend: 'FortyFiveDown', sign: '-', delta: 5},
     // Widest the cards ever get: two days-and-hours strings at once, no warning triangle to shrink
-    // them. If this one fits, every real value does.
+    // them, plus the widest realistic insulin reading. If this one fits, every real value does.
     'panel-widest': {...base, sugar: 188, band: 'high', trend: 'FortyFiveUp',
         sensorRemaining: '9d 23h', sensorRemainingHours: 239,
-        podRemaining: '2d 23h', podRemainingHours: 71},
+        podRemaining: '2d 23h', podRemainingHours: 71,
+        podInsulin: '168.5 U'},
     // One missed reading, and simultaneously the widest the top row ever gets: triangle plus a
     // three-digit value plus a double arrow plus a two-digit delta.
     'panel-age-warning': {...base, sugar: 268, band: 'urgentHigh', trend: 'DoubleUp', sign: '+', delta: 14,
         ageMinutes: 8, ageWarning: true},
     'panel-stale': {...base, sugar: 143, trend: 'None', ageMinutes: 41, ageWarning: true, stale: true, sign: '±', delta: 0},
     'panel-error': {...base, error: 'Could not get entries. Code 502', band: 'unknown'},
+    // The pod is fresh (not podExpiring) but the reservoir is the thing that's actually low -- this
+    // is what checks that podInsulinLow alone, without podExpiring, still turns the card red.
+    'panel-pod-insulin-low': {...base, podExpiring: false, podRemaining: '2d 6h', podRemainingHours: 54,
+        podInsulin: '7.5 U', podInsulinLow: true},
+    // No pump status at all -- the card should read as a plain, non-alarming '--' rather than a
+    // blank or a zero.
+    'panel-pod-insulin-unknown': {...base, podExpiring: false, podInsulin: '--', podInsulinLow: false},
 };
 
 const browser = await puppeteer.launch({
