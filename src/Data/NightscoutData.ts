@@ -80,6 +80,7 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
     const isCharging: boolean = deviceStatus.isCharging;
     const alert: string = (deviceStatus.battery < 15) ? 'alert' : '';
     const iob: string = state.error ? '?' : (Math.round(state.iob * 100) / 100).toFixed(2);
+    const podInsulinUnits: number | null = deviceStatus.error ? null : deviceStatus.reservoirUnits;
 
     return {
         error: '',
@@ -98,6 +99,7 @@ async function getLatestValues(nightscoutToken: NightscoutToken): Promise<Nights
         sensorHours: ages.sensorHours,
         podHours: ages.podHours,
         sensorExpiring: isExpiring(ages.sensorHours, SENSOR_LIFETIME_HOURS, SENSOR_WARNING_HOURS),
-        podExpiring: isExpiring(ages.podHours, POD_LIFETIME_HOURS, POD_WARNING_HOURS)
+        podExpiring: isExpiring(ages.podHours, POD_LIFETIME_HOURS, POD_WARNING_HOURS),
+        podInsulinUnits: podInsulinUnits
     };
 }
