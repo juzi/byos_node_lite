@@ -25,7 +25,7 @@ export const URGENT_HIGH_MG_DL = 250;
 // The panel is dark between these hours, local time. The schedule lives here rather than in the
 // firmware because this is the only side that knows the wall clock and the timezone -- the panel
 // has no RTC, and doing it here means DST is somebody else's problem.
-export const SLEEP_FROM_HOUR = 11;
+export const SLEEP_FROM_HOUR = 23;
 export const SLEEP_UNTIL_HOUR = 6;
 
 // How often to check back while dark. Rare enough that a night costs a handful of fetches instead
